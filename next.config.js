@@ -1,7 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['https://csmbuea.vercel.app/'], // replace later
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co', // Allows images hosted on Supabase storage
+      },
+    ],
   },
 }
+
 module.exports = nextConfig
