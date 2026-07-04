@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import { X, Send } from "lucide-react";
 import { uploadProduct } from "@/app/admin/upload/actions";
 import { useRouter } from "next/navigation";
 
@@ -68,7 +69,7 @@ export function ProductPreviewModal({ file, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
       <button onClick={onClose} className="absolute top-4 left-4 p-2 rounded-full bg-black/50 text-white z-10 hover:bg-black/70">
-        ✕
+        <X size={28} />
       </button>
       <div className="flex-1 relative bg-black flex items-center justify-center">
         <div className="relative w-full max-w-md h-full max-h-[70vh] flex items-center justify-center">
@@ -93,7 +94,7 @@ export function ProductPreviewModal({ file, onClose }: Props) {
       {step === 3 && !isSubmitting && (
         <div className="absolute bottom-6 right-4">
           <button onClick={handleAdvance} className="p-4 bg-green-500 rounded-full text-white shadow-lg hover:scale-105 transition-transform">
-            <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+            <Send size={24} />
           </button>
         </div>
       )}
