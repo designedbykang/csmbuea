@@ -1,5 +1,11 @@
-export const metadata = {
-  title: 'CSM Buea',
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata: Metadata = {
+  title: 'CSM Buea | Chinese Supermarket Buea',
+  description: 'Quality electronics, household appliances, and home decor essentials delivered across Cameroon.',
 }
 
 export default function RootLayout({
@@ -9,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }
