@@ -5,9 +5,10 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 export async function uploadProduct(formData: FormData) {
-  const cookieStore = cookies();
+  // 1. Await the cookies() promise
+  const cookieStore = await cookies();
   
-  // Create the supabase server client with cookies
+  // 2. Create the Supabase server client with the resolved cookieStore
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -20,7 +21,7 @@ export async function uploadProduct(formData: FormData) {
     }
   );
 
-  // Verify the user is authenticated
+  // 3. Verify the user is authenticated
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     throw new Error("Unauthorized. Please log in.");
@@ -35,7 +36,7 @@ export async function uploadProduct(formData: FormData) {
     throw new Error("Missing required fields");
   }
 
-  // 1. Upload image to Supabase Storage
+  // 4. Upload image to Supabase Storage
   const fileExt = file.name.split(".").pop();
   const fileName = `${Date.now()}.${fileExt}`;
   const { data: uploadData, error: uploadError } = await supabase.storage
@@ -47,12 +48,12 @@ export async function uploadProduct(formData: FormData) {
     throw new Error("Failed to upload image to storage");
   }
 
-  // 2. Get the public URL
+  // 5. Get the public URL
   const { data: urlData } = supabase.storage
     .from("product-images")
     .getPublicUrl(fileName);
 
-  // 3. Insert product into database
+  // 6. Insert product into database
   const { error: dbError } = await supabase.from("products").insert({
     title,
     price,
