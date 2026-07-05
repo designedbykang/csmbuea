@@ -17,6 +17,7 @@ export function ProductPreviewModal({ file, onClose }: Props) {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const previewUrl = URL.createObjectURL(file);
@@ -25,13 +26,18 @@ export function ProductPreviewModal({ file, onClose }: Props) {
     if (inputRef.current) inputRef.current.focus();
   }, [step]);
 
-  const handleAdvance = async () => {
+  const handleNext = () => {
     if (step < 2) {
       setStep(step + 1);
-      return;
+    } else {
+      // Step 3: show the send button (no automatic submit)
+      setStep(3);
     }
+  };
 
+  const handleSubmit = async () => {
     setIsSubmitting(true);
+    setErrorMessage(null);
     const formData = new FormData();
     formData.append("title", title);
     formData.append("price", price);
@@ -39,12 +45,15 @@ export function ProductPreviewModal({ file, onClose }: Props) {
     formData.append("file", file);
 
     try {
-      await uploadProduct(formData);
-      router.push("/admin/products");
+      const result = await uploadProduct(formData);
+      if (result.success) {
+        router.push("/admin/products");
+      } else {
+        setErrorMessage(result.error || "Unknown error");
+        setIsSubmitting(false);
+      }
     } catch (error: any) {
-      const message = error?.message || "Failed to post product.";
-      alert("Error: " + message);
-      console.error(error);
+      setErrorMessage(error?.message || "Upload failed. Check console.");
       setIsSubmitting(false);
     }
   };
@@ -78,6 +87,7 @@ export function ProductPreviewModal({ file, onClose }: Props) {
         </div>
       </div>
 
+      {/* Input field (steps 0–2) */}
       {step < 3 && !isSubmitting && (
         <div className="absolute bottom-12 left-4 right-4 flex items-center gap-2">
           <input
@@ -86,17 +96,27 @@ export function ProductPreviewModal({ file, onClose }: Props) {
             placeholder={getPlaceholder()}
             value={getValue()}
             onChange={(e) => setValue(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") handleAdvance(); }}
+            onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
             className="flex-1 bg-[#2d2d2d] rounded-full px-4 py-3 text-white text-base focus:outline-none focus:ring-1 focus:ring-green-500 placeholder:text-gray-500"
           />
         </div>
       )}
 
+      {/* Send button (step 3) */}
       {step === 3 && !isSubmitting && (
         <div className="absolute bottom-6 right-4">
-          <button onClick={handleAdvance} className="p-4 bg-green-500 rounded-full text-white shadow-lg hover:scale-105 transition-transform">
+          <button onClick={handleSubmit} className="p-4 bg-green-500 rounded-full text-white shadow-lg hover:scale-105 transition-transform">
             <Send size={24} />
           </button>
+        </div>
+      )}
+
+      {/* Error message */}
+      {errorMessage && (
+        <div className="absolute bottom-20 left-4 right-4 text-center">
+          <p className="text-red-500 text-sm bg-black/80 px-4 py-2 rounded-full inline-block">
+            {errorMessage}
+          </p>
         </div>
       )}
     </div>
