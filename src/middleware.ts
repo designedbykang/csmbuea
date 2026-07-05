@@ -5,6 +5,12 @@ import type { NextRequest } from 'next/server'
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
   
+  // 1. Critical fix: If the user is already on the login page, let them stay.
+  // This prevents the infinite redirect loop.
+  if (req.nextUrl.pathname === '/admin/login') {
+    return res
+  }
+  
   // Create the Supabase server client using the request/response cookies
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -20,7 +26,6 @@ export async function middleware(req: NextRequest) {
         },
         remove(name: string, options: any) {
           req.cookies.delete(name)
-          // res.cookies.delete does not accept options, so we just pass the name
           res.cookies.delete(name)
         },
       },
