@@ -5,13 +5,7 @@ import type { NextRequest } from 'next/server'
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
   
-  // 1. Critical fix: If the user is already on the login page, let them stay.
-  // This prevents the infinite redirect loop.
-  if (req.nextUrl.pathname === '/admin/login') {
-    return res
-  }
-  
-  // Create the Supabase server client using the request/response cookies
+  // Supabase SSR client setup (exact standard pattern)
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -32,15 +26,21 @@ export async function middleware(req: NextRequest) {
     }
   )
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  // If user is not logged in and tries to access /admin, redirect to /admin/login
-  if (!session && req.nextUrl.pathname.startsWith('/admin')) {
-    const redirectUrl = new URL('/admin/login', req.url)
-    return NextResponse.redirect(redirectUrl)
+  // 1. ALWAYS allow the login page to load. No redirects here.
+  if (req.nextUrl.pathname === '/admin/login') {
+    return res
   }
+
+  // 2. Check the session
+  const { data: { session } } = await supabase.auth.getSession()
+
+  // 3. If there's no session on a protected route, force a hard redirect to login.
+  if (!session && req.nextUrl.pathname.startsWith('/admin')) {
+    // Using a hard redirect (302) ensures the browser completely forgets the stale page
+    const redirectUrl = new URL('/admin/login', req.url)
+    return NextResponse.redirect(redirectUrl, 302)
+  }
+
   return res
 }
 
