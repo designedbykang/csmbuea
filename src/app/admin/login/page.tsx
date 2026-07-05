@@ -16,17 +16,22 @@ export default function AdminLogin() {
     setIsLoading(true);
     setError("");
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    // CRITICAL FIX: Trim the email to remove accidental trailing spaces
+    const trimmedEmail = email.trim();
+
+    const { error } = await supabase.auth.signInWithPassword({ 
+      email: trimmedEmail, 
+      password 
+    });
     
     if (error) {
       setError(error.message);
       setIsLoading(false);
     } else {
-      // Wait 1 second for the browser to commit the session cookies, 
-      // then navigate to the admin panel.
+      // Wait 500ms for the browser to commit the session cookies
       setTimeout(() => {
         router.replace("/admin/products");
-      }, 1000);
+      }, 500);
     }
   };
 
