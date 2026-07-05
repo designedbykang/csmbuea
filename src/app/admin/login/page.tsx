@@ -13,19 +13,36 @@ export default function AdminLogin() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setError(error.message);
-    else router.push("/admin/products");
+    if (error) {
+      setError(error.message);
+    } else {
+      router.push("/admin/products");
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-xl shadow-md w-80">
-        <h1 className="text-xl font-bold mb-4">Admin Login</h1>
+        <h1 className="text-xl font-bold mb-4 text-center">Admin Login</h1>
         <form onSubmit={handleLogin} className="space-y-4">
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border rounded px-3 py-2" required />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border rounded px-3 py-2" required />
+          <input 
+            type="email" 
+            placeholder="Email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            className="w-full border rounded px-3 py-2 text-sm" required 
+          />
+          <input 
+            type="password" 
+            placeholder="Password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            className="w-full border rounded px-3 py-2 text-sm" required 
+          />
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          <button className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Log In</button>
+          <button className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 text-sm font-semibold">
+            Log In
+          </button>
         </form>
       </div>
     </div>
