@@ -5,10 +5,8 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 export async function uploadProduct(formData: FormData) {
-  // 1. Await the cookies() promise
   const cookieStore = await cookies();
-  
-  // 2. Create the Supabase server client with the resolved cookieStore
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -21,10 +19,10 @@ export async function uploadProduct(formData: FormData) {
     }
   );
 
-  // 3. Verify the user is authenticated
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    throw new Error("Unauthorized. Please log in.");
+  // 1. Verify user is authenticated
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return { success: false, error: "Unauthorized. Please log in again." };
   }
 
   const title = formData.get("title") as string;
@@ -33,27 +31,27 @@ export async function uploadProduct(formData: FormData) {
   const file = formData.get("file") as File;
 
   if (!file || !title || !price) {
-    throw new Error("Missing required fields");
+    return { success: false, error: "Missing required fields (title, price, or image)." };
   }
 
-  // 4. Upload image to Supabase Storage
+  // 2. Upload image to Supabase Storage
   const fileExt = file.name.split(".").pop();
   const fileName = `${Date.now()}.${fileExt}`;
-  const { data: uploadData, error: uploadError } = await supabase.storage
+  const { error: uploadError } = await supabase.storage
     .from("product-images")
     .upload(fileName, file);
 
   if (uploadError) {
-    console.error("Upload Error:", uploadError);
-    throw new Error("Failed to upload image to storage");
+    console.error("Upload error:", uploadError);
+    return { success: false, error: `Upload failed: ${uploadError.message}` };
   }
 
-  // 5. Get the public URL
+  // 3. Get the public URL
   const { data: urlData } = supabase.storage
     .from("product-images")
     .getPublicUrl(fileName);
 
-  // 6. Insert product into database
+  // 4. Insert product into database
   const { error: dbError } = await supabase.from("products").insert({
     title,
     price,
@@ -62,9 +60,10 @@ export async function uploadProduct(formData: FormData) {
   });
 
   if (dbError) {
-    console.error("Database Error:", dbError);
-    throw new Error("Failed to save product to database");
+    console.error("Database error:", dbError);
+    return { success: false, error: `Database error: ${dbError.message}` };
   }
 
   revalidatePath("/admin/products");
+  return { success: true };
 }
