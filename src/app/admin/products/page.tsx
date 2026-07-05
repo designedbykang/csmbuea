@@ -1,8 +1,9 @@
-import { supabase } from "@/lib/supabase";
+import { createSupabaseServerClient } from "@/lib/serverSupabase";
 import { ProductChatBubble } from "@/components/admin/ProductChatBubble";
 import Link from "next/link";
 
 export default async function AdminProductsPage() {
+  const supabase = await createSupabaseServerClient();
   const { data: products, error } = await supabase
     .from("products")
     .select("*")
