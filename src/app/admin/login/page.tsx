@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
@@ -10,20 +10,6 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
-  // 1. Listen for auth state changes to navigate ONLY when the session is verified
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) {
-        // Now that the client confirms the session is set, push to the products page
-        router.push("/admin/products");
-      }
-    });
-
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
-  }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,9 +21,13 @@ export default function AdminLogin() {
     if (error) {
       setError(error.message);
       setIsLoading(false);
+    } else {
+      // Wait 1 second for the browser to commit the session cookies, 
+      // then navigate to the admin panel.
+      setTimeout(() => {
+        router.replace("/admin/products");
+      }, 1000);
     }
-    // If there is no error, the useEffect above will handle the navigation.
-    // We do NOT call router.push() here.
   };
 
   return (
@@ -64,7 +54,7 @@ export default function AdminLogin() {
             type="submit" 
             disabled={isLoading}
             className={`w-full py-2 rounded text-sm font-semibold transition-colors ${
-              isLoading ? "bg-green-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700 text-white"
+              isLoading ? "bg-gray-400 text-gray-200 cursor-not-allowed" : "bg-green-600 hover:bg-green-700 text-white"
             }`}
           >
             {isLoading ? "Logging in..." : "Log In"}
