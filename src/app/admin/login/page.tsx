@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,31 +26,9 @@ export default function AdminLogin() {
       setError(error.message);
       setIsLoading(false);
     } else {
-      // Mark success, then force reload after 2 seconds
-      setSuccess(true);
-      setTimeout(() => {
-        window.location.replace("/admin/products");
-      }, 2000);
+      router.push("/admin/products");
     }
   };
-
-  // If login succeeded, show a success screen with a manual link
-  if (success) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-xl shadow-md w-80 text-center">
-          <h2 className="text-green-600 text-xl font-bold">Logged in!</h2>
-          <p className="text-gray-600 mt-2">Redirecting to admin...</p>
-          <p className="mt-4 text-sm text-gray-400">
-            If you aren't redirected automatically,{" "}
-            <a href="/admin/products" className="text-blue-600 underline">
-              click here
-            </a>.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
