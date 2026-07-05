@@ -20,7 +20,8 @@ export async function middleware(req: NextRequest) {
         },
         remove(name: string, options: any) {
           req.cookies.delete(name)
-          res.cookies.delete(name, options)
+          // res.cookies.delete does not accept options, so we just pass the name
+          res.cookies.delete(name)
         },
       },
     }
