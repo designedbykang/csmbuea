@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { Plus, Paperclip, Camera, Mic, X, Send } from "lucide-react";
+import Link from "next/link";
 
-// ---------- WhatsApp-style Input Bar ----------
 function WhatsAppInputBar({ onGalleryPick, onCameraPick }: { onGalleryPick: (f: File) => void; onCameraPick: (f: File) => void }) {
   const galleryRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
@@ -22,7 +22,6 @@ function WhatsAppInputBar({ onGalleryPick, onCameraPick }: { onGalleryPick: (f: 
   );
 }
 
-// ---------- Product Bubble (like WhatsApp message) ----------
 function ProductChatBubble({ imageUrl, title, price, description, createdAt }: { imageUrl: string; title: string; price: number; description?: string; createdAt: string }) {
   return (
     <div className="flex flex-col items-end mb-4">
@@ -48,7 +47,6 @@ function ProductChatBubble({ imageUrl, title, price, description, createdAt }: {
   );
 }
 
-// ---------- Preview Modal (step‑by‑step input) ----------
 function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: () => void; onPost: (title: string, price: number, desc: string, file: File) => Promise<void> }) {
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState("");
@@ -89,13 +87,9 @@ function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: (
   );
 }
 
-// ---------- Main Admin Page ----------
 export default function AdminPage() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
   const [products, setProducts] = useState<any[]>([]);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
 
@@ -115,19 +109,17 @@ export default function AdminPage() {
     }
   }, [session]);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError("");
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-    if (error) setLoginError(error.message);
-  };
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-500">Loading...</div>;
+
+  if (!session) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-100"><div className="bg-white p-8 rounded-xl shadow-md"><h1 className="text-xl font-bold mb-4">Admin Login</h1><p className="text-gray-600">Please log in via the login page.</p></div></div>;
+  }
 
   const handlePost = async (title: string, price: number, desc: string, file: File) => {
     const fileName = `${Date.now()}.${file.name.split(".").pop()}`;
     const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, file);
     if (uploadError) throw new Error(uploadError.message);
     const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(fileName);
-
     const { error: dbError } = await supabase.from("products").insert({
       title,
       price,
@@ -135,34 +127,15 @@ export default function AdminPage() {
       image_url: urlData.publicUrl,
     });
     if (dbError) throw new Error(dbError.message);
-
     const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false });
     if (data) setProducts(data);
   };
-
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-500">Loading...</div>;
-
-  if (!session) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-xl shadow-md w-80">
-          <h1 className="text-xl font-bold mb-4 text-center">Admin Login</h1>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border rounded px-3 py-2" required />
-            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border rounded px-3 py-2" required />
-            {loginError && <p className="text-red-500 text-sm text-center">{loginError}</p>}
-            <button type="submit" className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Log In</button>
-          </form>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-[#efeae2] p-4 pb-24 relative">
       <div className="flex justify-between items-center mb-6 sticky top-0 bg-[#efeae2] py-2 z-10">
         <h1 className="text-xl font-bold text-gray-800">My Products</h1>
-        <button onClick={() => supabase.auth.signOut()} className="text-sm text-red-500 underline">Logout</button>
+        <Link href="/admin/orders" className="text-sm text-blue-600 underline">View Orders</Link>
       </div>
 
       <div className="flex flex-col max-w-2xl mx-auto">
@@ -183,11 +156,7 @@ export default function AdminPage() {
       </div>
 
       {uploadFile && (
-        <ProductPreviewModal
-          file={uploadFile}
-          onClose={() => setUploadFile(null)}
-          onPost={handlePost}
-        />
+        <ProductPreviewModal file={uploadFile} onClose={() => setUploadFile(null)} onPost={handlePost} />
       )}
 
       <WhatsAppInputBar
