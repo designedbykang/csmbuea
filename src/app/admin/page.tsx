@@ -54,85 +54,78 @@ function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: (
     onClose();
   };
 
-  // Render Logic for each step
-  const renderStepInput = () => {
-    if (step === 0) {
-      return (
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-gray-300">Product Title</label>
-          <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="e.g. Hisense 50\" QLED TV"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
-              className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
-            />
-          </div>
+  // Directly render the input based on the step, avoiding separate function calls
+  let inputContent = null;
+  if (step === 0) {
+    inputContent = (
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-semibold text-gray-300">Product Title</label>
+        <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="e.g. Hisense 50\" QLED TV"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
+            className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
+          />
         </div>
-      );
-    } else if (step === 1) {
-      return (
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-gray-300">Price</label>
-          <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-            <span className="text-gray-400 mr-2 font-bold">XAF</span>
-            <input
-              ref={inputRef}
-              type="number"
-              placeholder="0"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
-              className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
-            />
-          </div>
+      </div>
+    );
+  } else if (step === 1) {
+    inputContent = (
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-semibold text-gray-300">Price</label>
+        <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
+          <span className="text-gray-400 mr-2 font-bold">XAF</span>
+          <input
+            ref={inputRef}
+            type="number"
+            placeholder="0"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
+            className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
+          />
         </div>
-      );
-    } else if (step === 2) {
-      return (
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-gray-300">Description (Optional)</label>
-          <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="Highlight the best features..."
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
-              className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
-            />
-          </div>
+      </div>
+    );
+  } else if (step === 2) {
+    inputContent = (
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-semibold text-gray-300">Description (Optional)</label>
+        <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Highlight the best features..."
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
+            className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
+          />
         </div>
-      );
-    }
-    return null;
-  };
+      </div>
+    );
+  }
 
   return (
-    // z-[100] makes sure this modal sits ABOVE the BottomNav
     <div className="fixed inset-0 z-[100] bg-black flex flex-col">
-      
-      {/* Close Button */}
       <button onClick={onClose} className="absolute top-4 left-4 p-2 rounded-full bg-black/50 text-white z-10 hover:bg-black/70 transition-colors">
         <X size={28} />
       </button>
 
-      {/* Image Preview Area - expands to fill remaining space */}
       <div className="flex-1 relative bg-black flex items-center justify-center min-h-0">
         <div className="relative w-full max-w-md h-full max-h-[60vh] flex items-center justify-center">
           <Image src={previewUrl} alt="Preview" fill className="object-contain" />
         </div>
       </div>
 
-      {/* Input Panel - Pinned to bottom; Flex-col structure pushes it up when the keyboard opens */}
       <div className="bg-[#1a1a1a] rounded-t-3xl p-6 pb-10 shadow-2xl flex flex-col gap-4">
         {step < 3 && !submitting ? (
           <div className="flex flex-col gap-6">
-            {renderStepInput()}
+            {inputContent}
             <div className="flex justify-end text-xs text-gray-500 mt-2">
               Press Enter to continue...
             </div>
