@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-const WHATSAPP_NUMBER = "237654573109"; // Replace with your business WhatsApp number
+const WHATSAPP_NUMBER = "237682712423"; // Replace with your business WhatsApp number
 
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart();
