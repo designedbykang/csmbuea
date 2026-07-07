@@ -12,14 +12,12 @@ export default function BottomNav() {
   const { items } = useCart();
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Check if user is logged in (admin)
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAdmin(!!session);
     });
   }, []);
 
-  // Hide bottom nav on checkout pages
   if (pathname.startsWith("/checkout")) return null;
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
