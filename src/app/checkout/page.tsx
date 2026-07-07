@@ -4,9 +4,9 @@ import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Hand, Smile } from "lucide-react";
 
-const WHATSAPP_NUMBER = "237682712423"; // Replace with your business WhatsApp number
+const WHATSAPP_NUMBER = "237654573109"; // Replace with your actual number
 
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart();
@@ -18,50 +18,53 @@ export default function CheckoutPage() {
     notes: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleNext = () => {
     if (step === 1 && !form.name.trim()) return;
     if (step === 2 && !form.phone.trim()) return;
     setStep(step + 1);
+    setErrorMessage(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setErrorMessage(null);
 
-    const { data: orderData, error: orderError } = await supabase
-      .from("orders")
-      .insert({
-        customer_name: form.name,
-        phone: form.phone,
-        address: form.deliveryType === "delivery" ? "To be confirmed via WhatsApp" : "Pickup",
-        total_amount: total,
-        delivery_type: form.deliveryType,
-        notes: form.notes,
-      })
-      .select()
-      .single();
+    try {
+      // 1. Insert the order
+      const { data: orderData, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          customer_name: form.name,
+          phone: form.phone,
+          address: form.deliveryType === "delivery" ? "To be confirmed via WhatsApp" : "Pickup",
+          total_amount: total,
+          delivery_type: form.deliveryType,
+          notes: form.notes,
+        })
+        .select()
+        .single();
 
-    if (orderError || !orderData) {
-      alert("Oops! We couldn't prepare your order. Please try again.");
-      setSubmitting(false);
-      return;
-    }
+      if (orderError) throw new Error(orderError.message);
+      if (!orderData) throw new Error("Order creation returned no data.");
 
-    const orderItems = items.map((item) => ({
-      order_id: orderData.id,
-      product_title: item.title,
-      product_price: item.price,
-      quantity: item.quantity,
-      image_url: item.image_url,
-    }));
+      // 2. Insert order items
+      const orderItems = items.map((item) => ({
+        order_id: orderData.id,
+        product_title: item.title,
+        product_price: item.price,
+        quantity: item.quantity,
+        image_url: item.image_url,
+      }));
 
-    const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
-    if (itemsError) console.error("Items save error", itemsError);
+      const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
+      if (itemsError) throw new Error(itemsError.message);
 
-    clearCart();
-
-    const message = `Hi CSM Buea! 👋 I'd like to place an order.
+      // 3. Clear cart and redirect to WhatsApp
+      clearCart();
+      const message = `Hi CSM Buea! 👋 I'd like to place an order.
 
 Name: ${form.name}
 Phone: ${form.phone}
@@ -75,8 +78,13 @@ Total: ${total.toLocaleString()} XAF
 
 Looking forward to hearing from you!`;
 
-    const encoded = encodeURIComponent(message);
-    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
+      const encoded = encodeURIComponent(message);
+      window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
+    } catch (err: any) {
+      // Show the actual error message from Supabase
+      setErrorMessage(err.message || "Unknown error. Check your console.");
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -87,9 +95,17 @@ Looking forward to hearing from you!`;
 
       <div className="flex flex-col gap-6">
         <div className="bg-[#F6AD55] text-white p-4 rounded-2xl rounded-tl-none shadow-sm">
-          <p className="text-lg font-semibold">Almost done! 👋</p>
+          <p className="text-lg font-semibold flex items-center">
+            Almost done! <Hand size={20} className="ml-2" />
+          </p>
           <p className="text-sm mt-1 opacity-90">Let's prepare your order before we chat on WhatsApp.</p>
         </div>
+
+        {errorMessage && (
+          <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-sm">
+            ❌ {errorMessage}
+          </div>
+        )}
 
         {step === 1 && (
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
@@ -182,8 +198,8 @@ Looking forward to hearing from you!`;
             >
               {submitting ? "Sending..." : "Finish & Chat on WhatsApp"}
             </button>
-            <p className="text-xs text-gray-400 text-center mt-3">
-              We'll save your order and continue on WhatsApp 😊
+            <p className="text-xs text-gray-400 text-center mt-3 flex items-center justify-center">
+              We'll save your order and continue on WhatsApp <Smile size={16} className="ml-1" />
             </p>
           </div>
         )}
