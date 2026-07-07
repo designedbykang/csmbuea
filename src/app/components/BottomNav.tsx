@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { ShoppingCart, Store, User } from "lucide-react";
+import { ShoppingCart, Store, User, House } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -18,28 +18,22 @@ export default function BottomNav() {
     });
   }, []);
 
+  // Now we ONLY hide it on the checkout flow. Admin pages will use the nav!
   if (pathname.startsWith("/checkout")) return null;
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 pb-safe shadow-lg z-50">
-      <Link
-        href="/products"
-        className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
-          pathname === "/products" ? "text-[#2B6CB0]" : "text-gray-500"
-        }`}
-      >
+      <Link href="/" className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${pathname === "/" ? "text-[#2B6CB0]" : "text-gray-500"}`}>
+        <House size={24} />
+        <span className="text-[10px] font-medium">Home</span>
+      </Link>
+      <Link href="/products" className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${pathname === "/products" ? "text-[#2B6CB0]" : "text-gray-500"}`}>
         <Store size={24} />
         <span className="text-[10px] font-medium">Products</span>
       </Link>
-
-      <Link
-        href="/cart"
-        className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors relative ${
-          pathname === "/cart" ? "text-[#2B6CB0]" : "text-gray-500"
-        }`}
-      >
+      <Link href="/cart" className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors relative ${pathname === "/cart" ? "text-[#2B6CB0]" : "text-gray-500"}`}>
         <ShoppingCart size={24} />
         {cartCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
@@ -48,14 +42,8 @@ export default function BottomNav() {
         )}
         <span className="text-[10px] font-medium">Cart</span>
       </Link>
-
       {isAdmin && (
-        <Link
-          href="/admin"
-          className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
-            pathname.startsWith("/admin") ? "text-[#2B6CB0]" : "text-gray-500"
-          }`}
-        >
+        <Link href="/admin" className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${pathname.startsWith("/admin") ? "text-[#2B6CB0]" : "text-gray-500"}`}>
           <User size={24} />
           <span className="text-[10px] font-medium">Admin</span>
         </Link>
