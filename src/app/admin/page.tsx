@@ -63,7 +63,8 @@ function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: (
   const handleNext = () => { if (step < 2) setStep(step + 1); else setStep(3); };
   const handleSubmit = async () => {
     setSubmitting(true);
-    await onPost(title, price, desc, file);
+    const priceNumber = Number(price) || 0;
+    await onPost(title, priceNumber, desc, file);
     setSubmitting(false);
     onClose();
   };
@@ -98,7 +99,6 @@ export default function AdminPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
 
-  // Check auth on mount
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -107,7 +107,6 @@ export default function AdminPage() {
     supabase.auth.onAuthStateChange((_event, session) => setSession(session));
   }, []);
 
-  // Fetch products when logged in
   useEffect(() => {
     if (session) {
       supabase.from("products").select("*").order("created_at", { ascending: false }).then(({ data }) => {
@@ -124,13 +123,11 @@ export default function AdminPage() {
   };
 
   const handlePost = async (title: string, price: number, desc: string, file: File) => {
-    // Upload image to Supabase Storage
     const fileName = `${Date.now()}.${file.name.split(".").pop()}`;
     const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, file);
     if (uploadError) throw new Error(uploadError.message);
     const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(fileName);
 
-    // Insert product into Supabase table
     const { error: dbError } = await supabase.from("products").insert({
       title,
       price,
@@ -139,7 +136,6 @@ export default function AdminPage() {
     });
     if (dbError) throw new Error(dbError.message);
 
-    // Refresh product list
     const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false });
     if (data) setProducts(data);
   };
