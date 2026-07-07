@@ -21,10 +21,10 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white p-4 pb-24 relative">
+    <div className="min-h-screen bg-white p-4 relative">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Your Bag</h1>
       
-      <div className="space-y-4">
+      <div className="space-y-4 pb-32">
         {items.map((item) => (
           <div key={item.id} className="flex gap-3 p-3 bg-gray-50 rounded-xl">
             <div className="relative w-20 h-20 bg-gray-200 rounded-lg overflow-hidden shrink-0">
@@ -50,7 +50,8 @@ export default function CartPage() {
         ))}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg">
+      {/* FIXED CHECKOUT BAR - Floating above the BottomNav */}
+      <div className="fixed bottom-[80px] left-0 right-0 bg-white border-t p-4 shadow-lg z-50">
         <div className="flex justify-between items-center mb-4">
           <span className="font-semibold text-gray-800">Total</span>
           <span className="font-bold text-xl text-gray-900">{total.toLocaleString()} XAF</span>
