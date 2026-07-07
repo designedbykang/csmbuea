@@ -1,122 +1,38 @@
-"use client";
-
-import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
-import { X, Send } from "lucide-react";
-import { uploadProduct } from "@/app/admin/upload/actions";
-import { useRouter } from "next/navigation";
-
-interface Props {
-  file: File;
-  onClose: () => void;
-}
-
-export function ProductPreviewModal({ file, onClose }: Props) {
-  const [step, setStep] = useState(0); // 0: Title, 1: Price, 2: Desc
+function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: () => void; onPost: (title: string, price: number, desc: string, file: File) => Promise<void> }) {
+  const [step, setStep] = useState(0);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [desc, setDesc] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
   const previewUrl = URL.createObjectURL(file);
+  useEffect(() => { return () => URL.revokeObjectURL(previewUrl); }, [previewUrl]);
+  useEffect(() => { if (inputRef.current) inputRef.current.focus(); }, [step]);
 
-  useEffect(() => {
-    if (inputRef.current) inputRef.current.focus();
-  }, [step]);
-
-  const handleNext = () => {
-    if (step < 2) {
-      setStep(step + 1);
-    } else {
-      // Step 3: show the send button (no automatic submit)
-      setStep(3);
-    }
-  };
-
+  const handleNext = () => { if (step < 2) setStep(step + 1); else setStep(3); };
   const handleSubmit = async () => {
-    setIsSubmitting(true);
-    setErrorMessage(null);
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("price", price);
-    formData.append("description", description);
-    formData.append("file", file);
-
-    try {
-      const result = await uploadProduct(formData);
-      if (result.success) {
-        router.push("/admin/products");
-      } else {
-        setErrorMessage(result.error || "Unknown error");
-        setIsSubmitting(false);
-      }
-    } catch (error: any) {
-      setErrorMessage(error?.message || "Upload failed. Check console.");
-      setIsSubmitting(false);
-    }
-  };
-
-  const getPlaceholder = () => {
-    if (step === 0) return "Add a product title...";
-    if (step === 1) return "Set price (XAF)...";
-    return "Add a description (optional)...";
-  };
-
-  const getValue = () => {
-    if (step === 0) return title;
-    if (step === 1) return price;
-    return description;
-  };
-
-  const setValue = (val: string) => {
-    if (step === 0) setTitle(val);
-    else if (step === 1) setPrice(val);
-    else setDescription(val);
+    setSubmitting(true);
+    // Convert price to number, fallback to 0 if invalid
+    const priceNumber = Number(price) || 0;
+    await onPost(title, priceNumber, desc, file);
+    setSubmitting(false);
+    onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
-      <button onClick={onClose} className="absolute top-4 left-4 p-2 rounded-full bg-black/50 text-white z-10 hover:bg-black/70">
-        <X size={28} />
-      </button>
+      <button onClick={onClose} className="absolute top-4 left-4 p-2 rounded-full bg-black/50 text-white"><X size={28} /></button>
       <div className="flex-1 relative bg-black flex items-center justify-center">
-        <div className="relative w-full max-w-md h-full max-h-[70vh] flex items-center justify-center">
-          <Image src={previewUrl} alt="Preview" fill className="object-contain" />
-        </div>
+        <Image src={previewUrl} alt="Preview" fill className="object-contain" />
       </div>
-
-      {/* Input field (steps 0–2) */}
-      {step < 3 && !isSubmitting && (
-        <div className="absolute bottom-12 left-4 right-4 flex items-center gap-2">
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder={getPlaceholder()}
-            value={getValue()}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
-            className="flex-1 bg-[#2d2d2d] rounded-full px-4 py-3 text-white text-base focus:outline-none focus:ring-1 focus:ring-green-500 placeholder:text-gray-500"
-          />
+      {step < 3 && !submitting && (
+        <div className="absolute bottom-12 left-4 right-4">
+          <input ref={inputRef} type="text" placeholder={step === 0 ? "Title" : step === 1 ? "Price (XAF)" : "Description"} value={step === 0 ? title : step === 1 ? price : desc} onChange={(e) => { if (step === 0) setTitle(e.target.value); else if (step === 1) setPrice(e.target.value); else setDesc(e.target.value); }} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="w-full bg-[#2d2d2d] rounded-full px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-green-500" />
         </div>
       )}
-
-      {/* Send button (step 3) */}
-      {step === 3 && !isSubmitting && (
+      {step === 3 && !submitting && (
         <div className="absolute bottom-6 right-4">
-          <button onClick={handleSubmit} className="p-4 bg-green-500 rounded-full text-white shadow-lg hover:scale-105 transition-transform">
-            <Send size={24} />
-          </button>
-        </div>
-      )}
-
-      {/* Error message */}
-      {errorMessage && (
-        <div className="absolute bottom-20 left-4 right-4 text-center">
-          <p className="text-red-500 text-sm bg-black/80 px-4 py-2 rounded-full inline-block">
-            {errorMessage}
-          </p>
+          <button onClick={handleSubmit} className="p-4 bg-green-500 rounded-full text-white shadow-lg"><Send size={24} /></button>
         </div>
       )}
     </div>
