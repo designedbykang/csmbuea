@@ -3,25 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
-import { Plus, Paperclip, Camera, Mic, X, Send, Package } from "lucide-react";
+import { Plus, X, Send, Package } from "lucide-react";
 import Link from "next/link";
 
-function WhatsAppInputBar({ onGalleryPick, onCameraPick }: { onGalleryPick: (f: File) => void; onCameraPick: (f: File) => void }) {
-  const galleryRef = useRef<HTMLInputElement>(null);
-  const cameraRef = useRef<HTMLInputElement>(null);
-  return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#f0f0f0] p-3 flex items-center gap-3 border-t border-gray-300">
-      <input type="file" accept="image/*" ref={galleryRef} className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onGalleryPick(f); }} />
-      <input type="file" accept="image/*" capture="environment" ref={cameraRef} className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onCameraPick(f); }} />
-      <button className="text-2xl text-black p-2"><Plus size={24} /></button>
-      <div className="flex-1 bg-white rounded-full px-4 py-2 text-sm text-gray-400 shadow-inner">Upload a product...</div>
-      <button onClick={() => galleryRef.current?.click()} className="text-gray-700 p-2"><Paperclip size={22} /></button>
-      <button onClick={() => cameraRef.current?.click()} className="text-gray-700 p-2"><Camera size={22} /></button>
-      <button className="text-gray-400 p-2"><Mic size={22} /></button>
-    </div>
-  );
-}
-
+// ---------- Product Bubble Component ----------
 function ProductChatBubble({ imageUrl, title, price, description, createdAt }: { imageUrl: string; title: string; price: number; description?: string; createdAt: string }) {
   return (
     <div className="flex flex-col items-end mb-4">
@@ -47,6 +32,7 @@ function ProductChatBubble({ imageUrl, title, price, description, createdAt }: {
   );
 }
 
+// ---------- Preview Modal ----------
 function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: () => void; onPost: (title: string, price: number, desc: string, file: File) => Promise<void> }) {
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState("");
@@ -87,11 +73,13 @@ function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: (
   );
 }
 
+// ---------- Main Admin Page ----------
 export default function AdminPage() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<any[]>([]);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -131,8 +119,15 @@ export default function AdminPage() {
     if (data) setProducts(data);
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) setUploadFile(file);
+    e.target.value = ""; // Reset input
+  };
+
   return (
     <div className="min-h-screen bg-[#efeae2] p-4 pb-24 relative">
+      
       <div className="flex justify-between items-center mb-6 sticky top-0 bg-[#efeae2] py-2 z-10">
         <h1 className="text-xl font-bold text-gray-800">My Products</h1>
         <Link href="/admin/orders" className="bg-white text-[#2B6CB0] px-4 py-1.5 rounded-full text-sm font-semibold shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors flex items-center gap-1.5">
@@ -141,9 +136,17 @@ export default function AdminPage() {
         </Link>
       </div>
 
+      <input 
+        type="file" 
+        accept="image/*" 
+        ref={fileInputRef} 
+        className="hidden" 
+        onChange={handleFileSelect} 
+      />
+
       <div className="flex flex-col max-w-2xl mx-auto">
         {products.length === 0 ? (
-          <div className="text-center text-gray-500 mt-10">No products yet. Tap the icons below to add one!</div>
+          <div className="text-center text-gray-500 mt-10">No products yet. Tap the + button below to add one!</div>
         ) : (
           products.map((p) => (
             <ProductChatBubble
@@ -158,14 +161,16 @@ export default function AdminPage() {
         )}
       </div>
 
+      <button 
+        onClick={() => fileInputRef.current?.click()}
+        className="fixed bottom-24 right-4 bg-[#2B6CB0] text-white p-4 rounded-full shadow-lg hover:bg-[#1a4a8a] transition-colors z-40"
+      >
+        <Plus size={28} />
+      </button>
+
       {uploadFile && (
         <ProductPreviewModal file={uploadFile} onClose={() => setUploadFile(null)} onPost={handlePost} />
       )}
-
-      <WhatsAppInputBar
-        onGalleryPick={(f) => setUploadFile(f)}
-        onCameraPick={(f) => setUploadFile(f)}
-      />
     </div>
   );
 }
