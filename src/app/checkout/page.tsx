@@ -3,16 +3,13 @@
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-// 🔴 REPLACE THIS WITH YOUR ACTUAL CSM BUEA WHATSAPP NUMBER (without the + sign)
-const WHATSAPP_NUMBER = "237654573109"; 
+const WHATSAPP_NUMBER = "237654573109"; // Replace with your business WhatsApp number
 
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart();
-  const router = useRouter();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     name: "",
@@ -32,7 +29,6 @@ export default function CheckoutPage() {
     e.preventDefault();
     setSubmitting(true);
 
-    // 1. Save order to Supabase
     const { data: orderData, error: orderError } = await supabase
       .from("orders")
       .insert({
@@ -52,7 +48,6 @@ export default function CheckoutPage() {
       return;
     }
 
-    // 2. Save order items
     const orderItems = items.map((item) => ({
       order_id: orderData.id,
       product_title: item.title,
@@ -66,7 +61,6 @@ export default function CheckoutPage() {
 
     clearCart();
 
-    // 3. Build WhatsApp message
     const message = `Hi CSM Buea! 👋 I'd like to place an order.
 
 Name: ${form.name}
@@ -82,13 +76,9 @@ Total: ${total.toLocaleString()} XAF
 Looking forward to hearing from you!`;
 
     const encoded = encodeURIComponent(message);
-    const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
-    
-    // 4. Redirect to WhatsApp
-    window.location.href = waUrl;
+    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
   };
 
-  // ---------- Conversational UI ----------
   return (
     <div className="min-h-screen bg-white p-4 pb-24 max-w-md mx-auto">
       <Link href="/cart" className="inline-flex items-center text-gray-600 mb-6 hover:text-gray-900">
@@ -96,13 +86,11 @@ Looking forward to hearing from you!`;
       </Link>
 
       <div className="flex flex-col gap-6">
-        {/* Chat bubble style header */}
         <div className="bg-[#F6AD55] text-white p-4 rounded-2xl rounded-tl-none shadow-sm">
           <p className="text-lg font-semibold">Almost done! 👋</p>
           <p className="text-sm mt-1 opacity-90">Let's prepare your order before we chat on WhatsApp.</p>
         </div>
 
-        {/* Step 1: Name */}
         {step === 1 && (
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
             <p className="font-medium text-gray-800 mb-2">What's your name?</p>
@@ -124,7 +112,6 @@ Looking forward to hearing from you!`;
           </div>
         )}
 
-        {/* Step 2: Phone */}
         {step === 2 && (
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
             <p className="font-medium text-gray-800 mb-2">Your WhatsApp / phone number?</p>
@@ -145,7 +132,6 @@ Looking forward to hearing from you!`;
           </div>
         )}
 
-        {/* Step 3: Pickup or delivery */}
         {step === 3 && (
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
             <p className="font-medium text-gray-800 mb-2">Pickup or delivery?</p>
@@ -180,7 +166,6 @@ Looking forward to hearing from you!`;
           </div>
         )}
 
-        {/* Step 4: Notes (optional) + Finish */}
         {step === 4 && (
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
             <p className="font-medium text-gray-800 mb-2">Anything else we should know?</p>
@@ -203,7 +188,6 @@ Looking forward to hearing from you!`;
           </div>
         )}
 
-        {/* Progress indicator (dots) */}
         <div className="flex justify-center gap-2 mt-2">
           {[1, 2, 3, 4].map((s) => (
             <div
