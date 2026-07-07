@@ -32,7 +32,7 @@ function ProductChatBubble({ imageUrl, title, price, description, createdAt }: {
   );
 }
 
-// ---------- Enhanced Preview Modal ----------
+// ---------- Simplified Preview Modal (No complex variables) ----------
 function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: () => void; onPost: (title: string, price: number, desc: string, file: File) => Promise<void> }) {
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState("");
@@ -54,62 +54,6 @@ function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: (
     onClose();
   };
 
-  // Directly render the input based on the step, avoiding separate function calls
-  let inputContent = null;
-  if (step === 0) {
-    inputContent = (
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-gray-300">Product Title</label>
-        <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="e.g. Hisense 50\" QLED TV"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
-            className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
-          />
-        </div>
-      </div>
-    );
-  } else if (step === 1) {
-    inputContent = (
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-gray-300">Price</label>
-        <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-          <span className="text-gray-400 mr-2 font-bold">XAF</span>
-          <input
-            ref={inputRef}
-            type="number"
-            placeholder="0"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
-            className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
-          />
-        </div>
-      </div>
-    );
-  } else if (step === 2) {
-    inputContent = (
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-gray-300">Description (Optional)</label>
-        <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Highlight the best features..."
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
-            className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
-          />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="fixed inset-0 z-[100] bg-black flex flex-col">
       <button onClick={onClose} className="absolute top-4 left-4 p-2 rounded-full bg-black/50 text-white z-10 hover:bg-black/70 transition-colors">
@@ -125,7 +69,61 @@ function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: (
       <div className="bg-[#1a1a1a] rounded-t-3xl p-6 pb-10 shadow-2xl flex flex-col gap-4">
         {step < 3 && !submitting ? (
           <div className="flex flex-col gap-6">
-            {inputContent}
+            {/* Step 0: Title */}
+            {step === 0 && (
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-gray-300">Product Title</label>
+                <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    placeholder="e.g. Hisense 50\" QLED TV"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
+                    className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
+                  />
+                </div>
+              </div>
+            )}
+            
+            {/* Step 1: Price */}
+            {step === 1 && (
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-gray-300">Price</label>
+                <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
+                  <span className="text-gray-400 mr-2 font-bold">XAF</span>
+                  <input
+                    ref={inputRef}
+                    type="number"
+                    placeholder="0"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
+                    className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
+                  />
+                </div>
+              </div>
+            )}
+            
+            {/* Step 2: Description */}
+            {step === 2 && (
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-gray-300">Description (Optional)</label>
+                <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    placeholder="Highlight the best features..."
+                    value={desc}
+                    onChange={(e) => setDesc(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
+                    className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg"
+                  />
+                </div>
+              </div>
+            )}
+            
             <div className="flex justify-end text-xs text-gray-500 mt-2">
               Press Enter to continue...
             </div>
