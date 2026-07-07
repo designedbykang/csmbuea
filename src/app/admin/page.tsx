@@ -5,8 +5,7 @@ import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { Plus, Paperclip, Camera, Mic, X, Send } from "lucide-react";
 
-// ---------- Components (embedded for simplicity) ----------
-
+// ---------- WhatsApp-style Input Bar ----------
 function WhatsAppInputBar({ onGalleryPick, onCameraPick }: { onGalleryPick: (f: File) => void; onCameraPick: (f: File) => void }) {
   const galleryRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
@@ -23,6 +22,7 @@ function WhatsAppInputBar({ onGalleryPick, onCameraPick }: { onGalleryPick: (f: 
   );
 }
 
+// ---------- Product Bubble (like WhatsApp message) ----------
 function ProductChatBubble({ imageUrl, title, price, description, createdAt }: { imageUrl: string; title: string; price: number; description?: string; createdAt: string }) {
   return (
     <div className="flex flex-col items-end mb-4">
@@ -48,6 +48,7 @@ function ProductChatBubble({ imageUrl, title, price, description, createdAt }: {
   );
 }
 
+// ---------- Preview Modal (step‑by‑step input) ----------
 function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: () => void; onPost: (title: string, price: number, desc: string, file: File) => Promise<void> }) {
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState("");
@@ -88,7 +89,6 @@ function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: (
 }
 
 // ---------- Main Admin Page ----------
-
 export default function AdminPage() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -124,13 +124,13 @@ export default function AdminPage() {
   };
 
   const handlePost = async (title: string, price: number, desc: string, file: File) => {
-    // Upload image
+    // Upload image to Supabase Storage
     const fileName = `${Date.now()}.${file.name.split(".").pop()}`;
     const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, file);
     if (uploadError) throw new Error(uploadError.message);
     const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(fileName);
 
-    // Insert product
+    // Insert product into Supabase table
     const { error: dbError } = await supabase.from("products").insert({
       title,
       price,
