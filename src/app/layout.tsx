@@ -20,7 +20,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <CartProvider>
-          {/* Padding bottom ensures content doesn't hide behind the fixed BottomNav */}
           <div className="pb-20">
             {children}
           </div>
