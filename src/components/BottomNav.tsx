@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { ShoppingCart, Store, User } from "lucide-react";
+import { ShoppingCart, Store, User, House } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -12,7 +12,6 @@ export default function BottomNav() {
   const { items } = useCart();
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Check if user is logged in (admin)
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAdmin(!!session);
@@ -26,6 +25,16 @@ export default function BottomNav() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 pb-safe shadow-lg z-50">
+      <Link
+        href="/"
+        className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
+          pathname === "/" ? "text-[#2B6CB0]" : "text-gray-500"
+        }`}
+      >
+        <House size={24} />
+        <span className="text-[10px] font-medium">Home</span>
+      </Link>
+
       <Link
         href="/products"
         className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
