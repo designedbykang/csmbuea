@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
@@ -74,36 +73,33 @@ function ProductPreviewModal({ file, onClose, onPost }) {
       </div>
 
       <div className="bg-[#1a1a1a] rounded-t-3xl p-6 pb-10 shadow-2xl flex flex-col gap-4">
-        <div className="flex flex-col gap-6">
-          {step === 0 && !submitting && (
-            <div>
-              <label className="text-sm font-semibold text-gray-300 block mb-2">Product Title</label>
-              <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-                <input ref={inputRef} type="text" placeholder="e.g. Hisense 50\" QLED TV" value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
+        {!submitting && step < 3 && (
+          <div className="flex flex-col gap-6">
+            {step === 0 && (
+              <div>
+                <label className="text-sm font-semibold text-gray-300 block mb-2">Product Title</label>
+                <input ref={inputRef} type="text" placeholder="e.g. Hisense 50\" QLED TV" value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="w-full bg-[#2d2d2d] rounded-xl px-4 py-3 text-white focus:outline-none placeholder-gray-500 text-lg focus:ring-2 focus:ring-[#2B6CB0]" />
               </div>
-            </div>
-          )}
-          {step === 1 && !submitting && (
-            <div>
-              <label className="text-sm font-semibold text-gray-300 block mb-2">Price</label>
-              <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-                <span className="text-gray-400 mr-2 font-bold">XAF</span>
-                <input ref={inputRef} type="number" placeholder="0" value={price} onChange={(e) => setPrice(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
+            )}
+            {step === 1 && (
+              <div>
+                <label className="text-sm font-semibold text-gray-300 block mb-2">Price</label>
+                <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
+                  <span className="text-gray-400 mr-2 font-bold">XAF</span>
+                  <input ref={inputRef} type="number" placeholder="0" value={price} onChange={(e) => setPrice(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
+                </div>
               </div>
-            </div>
-          )}
-          {step === 2 && !submitting && (
-            <div>
-              <label className="text-sm font-semibold text-gray-300 block mb-2">Description (Optional)</label>
-              <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-                <input ref={inputRef} type="text" placeholder="Highlight the best features..." value={desc} onChange={(e) => setDesc(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
+            )}
+            {step === 2 && (
+              <div>
+                <label className="text-sm font-semibold text-gray-300 block mb-2">Description (Optional)</label>
+                <input ref={inputRef} type="text" placeholder="Highlight the best features..." value={desc} onChange={(e) => setDesc(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="w-full bg-[#2d2d2d] rounded-xl px-4 py-3 text-white focus:outline-none placeholder-gray-500 text-lg focus:ring-2 focus:ring-[#2B6CB0]" />
               </div>
-            </div>
-          )}
-          {step < 3 && !submitting && <div className="flex justify-end text-xs text-gray-500 mt-2">Press Enter to continue...</div>}
-        </div>
-
-        {step === 3 && !submitting && (
+            )}
+            <div className="flex justify-end text-xs text-gray-500 mt-2">Press Enter to continue...</div>
+          </div>
+        )}
+        {!submitting && step === 3 && (
           <div className="flex flex-col items-center justify-center gap-4 py-4">
             <p className="text-green-500 font-medium text-lg">Ready to post!</p>
             <button onClick={handleSubmit} className="p-4 bg-green-500 rounded-full text-white shadow-lg hover:scale-105 transition-transform">
@@ -111,7 +107,6 @@ function ProductPreviewModal({ file, onClose, onPost }) {
             </button>
           </div>
         )}
-
         {submitting && <div className="text-center text-gray-500 py-6">Submitting...</div>}
       </div>
     </div>
