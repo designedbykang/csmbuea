@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { Plus, X, Send, Package } from "lucide-react";
 import Link from "next/link";
 
-function ProductChatBubble({ imageUrl, title, price, description, createdAt }: { imageUrl: string; title: string; price: number; description?: string; createdAt: string }) {
+function ProductChatBubble({ imageUrl, title, price, description, createdAt }) {
   return (
     <div className="flex flex-col items-end mb-4">
       <div className="max-w-[85%] bg-[#dcf8c6] rounded-2xl rounded-tr-sm p-2 shadow-sm">
@@ -31,19 +31,28 @@ function ProductChatBubble({ imageUrl, title, price, description, createdAt }: {
   );
 }
 
-function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: () => void; onPost: (title: string, price: number, desc: string, file: File) => Promise<void> }) {
+function ProductPreviewModal({ file, onClose, onPost }) {
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [desc, setDesc] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef(null);
   const previewUrl = URL.createObjectURL(file);
-  
-  useEffect(() => { return () => URL.revokeObjectURL(previewUrl); }, [previewUrl]);
-  useEffect(() => { if (inputRef.current) inputRef.current.focus(); }, [step]);
 
-  const handleNext = () => { if (step < 2) setStep(step + 1); else setStep(3); };
+  useEffect(() => {
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
+
+  useEffect(() => {
+    if (inputRef.current) inputRef.current.focus();
+  }, [step]);
+
+  const handleNext = () => {
+    if (step < 2) setStep(step + 1);
+    else setStep(3);
+  };
+
   const handleSubmit = async () => {
     setSubmitting(true);
     const priceNumber = Number(price) || 0;
@@ -65,56 +74,56 @@ function ProductPreviewModal({ file, onClose, onPost }: { file: File; onClose: (
       </div>
 
       <div className="bg-[#1a1a1a] rounded-t-3xl p-6 pb-10 shadow-2xl flex flex-col gap-4">
-        {step < 3 && !submitting ? (
-          <div className="flex flex-col gap-6">
-            {step === 0 && (
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-gray-300">Product Title</label>
-                <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-                  <input ref={inputRef} type="text" placeholder="e.g. Hisense 50\" QLED TV" value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
-                </div>
+        <div className="flex flex-col gap-6">
+          {step === 0 && !submitting && (
+            <div>
+              <label className="text-sm font-semibold text-gray-300 block mb-2">Product Title</label>
+              <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
+                <input ref={inputRef} type="text" placeholder="e.g. Hisense 50\" QLED TV" value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
               </div>
-            )}
-            {step === 1 && (
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-gray-300">Price</label>
-                <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-                  <span className="text-gray-400 mr-2 font-bold">XAF</span>
-                  <input ref={inputRef} type="number" placeholder="0" value={price} onChange={(e) => setPrice(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
-                </div>
+            </div>
+          )}
+          {step === 1 && !submitting && (
+            <div>
+              <label className="text-sm font-semibold text-gray-300 block mb-2">Price</label>
+              <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
+                <span className="text-gray-400 mr-2 font-bold">XAF</span>
+                <input ref={inputRef} type="number" placeholder="0" value={price} onChange={(e) => setPrice(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
               </div>
-            )}
-            {step === 2 && (
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-gray-300">Description (Optional)</label>
-                <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-                  <input ref={inputRef} type="text" placeholder="Highlight the best features..." value={desc} onChange={(e) => setDesc(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
-                </div>
+            </div>
+          )}
+          {step === 2 && !submitting && (
+            <div>
+              <label className="text-sm font-semibold text-gray-300 block mb-2">Description (Optional)</label>
+              <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
+                <input ref={inputRef} type="text" placeholder="Highlight the best features..." value={desc} onChange={(e) => setDesc(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
               </div>
-            )}
-            <div className="flex justify-end text-xs text-gray-500 mt-2">Press Enter to continue...</div>
-          </div>
-        ) : step === 3 && !submitting ? (
+            </div>
+          )}
+          {step < 3 && !submitting && <div className="flex justify-end text-xs text-gray-500 mt-2">Press Enter to continue...</div>}
+        </div>
+
+        {step === 3 && !submitting && (
           <div className="flex flex-col items-center justify-center gap-4 py-4">
             <p className="text-green-500 font-medium text-lg">Ready to post!</p>
             <button onClick={handleSubmit} className="p-4 bg-green-500 rounded-full text-white shadow-lg hover:scale-105 transition-transform">
               <Send size={24} />
             </button>
           </div>
-        ) : (
-          <div className="text-center text-gray-500 py-6">Submitting...</div>
         )}
+
+        {submitting && <div className="text-center text-gray-500 py-6">Submitting...</div>}
       </div>
     </div>
   );
 }
 
 export default function AdminPage() {
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState<any[]>([]);
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [products, setProducts] = useState([]);
+  const [uploadFile, setUploadFile] = useState(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -138,7 +147,7 @@ export default function AdminPage() {
     return <div className="min-h-screen flex items-center justify-center bg-gray-100"><div className="bg-white p-8 rounded-xl shadow-md"><h1 className="text-xl font-bold mb-4">Admin Login</h1><p className="text-gray-600">Please log in via the login page.</p></div></div>;
   }
 
-  const handlePost = async (title: string, price: number, desc: string, file: File) => {
+  const handlePost = async (title, price, desc, file) => {
     const fileName = `${Date.now()}.${file.name.split(".").pop()}`;
     const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, file);
     if (uploadError) throw new Error(uploadError.message);
@@ -154,7 +163,7 @@ export default function AdminPage() {
     if (data) setProducts(data);
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (file) setUploadFile(file);
     e.target.value = "";
