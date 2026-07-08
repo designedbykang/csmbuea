@@ -12,16 +12,14 @@ export default function BottomNav() {
   const { items } = useCart();
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // ✅ HIDE THE NAV ON ALL ADMIN PAGES – SIMPLE & CLEAN
-  if (pathname.startsWith("/admin")) return null;
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAdmin(!!session);
     });
   }, []);
 
-  if (pathname.startsWith("/checkout")) return null;
+  // ONE-LINE FIX: Just hide the nav entirely on the admin route!
+  if (pathname.startsWith("/checkout") || pathname.startsWith("/admin")) return null;
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
