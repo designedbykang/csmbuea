@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
@@ -6,6 +7,7 @@ import { Plus, X, Send, Package, LogOut, MoreVertical } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// ---------- Product Bubble Component ----------
 function ProductChatBubble({ imageUrl, title, price, description, createdAt, onDelete, isMenuOpen, toggleMenu }) {
   return (
     <div className="flex flex-col items-end mb-4 relative group">
@@ -39,75 +41,85 @@ function ProductChatBubble({ imageUrl, title, price, description, createdAt, onD
   );
 }
 
-function ProductPreviewModal({ file, onClose, onPost }) {
-  const [step, setStep] = useState(0);
+// ---------- Simple Form Modal (One screen, all fields) ----------
+function ProductFormModal({ file, onClose, onPost }) {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
-  const [desc, setDesc] = useState("");
+  const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const inputRef = useRef(null);
   const previewUrl = URL.createObjectURL(file);
-  useEffect(() => { return () => URL.revokeObjectURL(previewUrl); }, [previewUrl]);
-  useEffect(() => { if (inputRef.current) inputRef.current.focus(); }, [step]);
-  const handleNext = () => { if (step < 2) setStep(step + 1); else setStep(3); };
-  const handleSubmit = async () => {
+
+  useEffect(() => {
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setSubmitting(true);
     const priceNumber = Number(price) || 0;
-    await onPost(title, priceNumber, desc, file);
+    await onPost(title, priceNumber, description, file);
     setSubmitting(false);
     onClose();
   };
+
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
-      <button onClick={onClose} className="absolute top-4 left-4 p-2 rounded-full bg-black/50 text-white z-10"><X size={28} /></button>
+      <button onClick={onClose} className="absolute top-4 left-4 p-2 rounded-full bg-black/50 text-white z-10">
+        <X size={28} />
+      </button>
       <div className="flex-1 relative bg-black flex items-center justify-center min-h-0">
         <div className="relative w-full max-w-md h-full max-h-[60vh] flex items-center justify-center">
           <Image src={previewUrl} alt="Preview" fill className="object-contain" />
         </div>
       </div>
       <div className="bg-[#1a1a1a] rounded-t-3xl p-6 pb-10 shadow-2xl flex flex-col gap-4">
-        {!submitting && step < 3 && (
-          <div className="flex flex-col gap-6">
-            {step === 0 && (
-              <div>
-                <label className="text-sm font-semibold text-gray-300 block mb-2">Product Title</label>
-                <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-                  <input ref={inputRef} type="text" placeholder="e.g. Hisense 50\" QLED TV" value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
-                </div>
-              </div>
-            )}
-            {step === 1 && (
-              <div>
-                <label className="text-sm font-semibold text-gray-300 block mb-2">Price</label>
-                <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-                  <span className="text-gray-400 mr-2 font-bold">XAF</span>
-                  <input ref={inputRef} type="number" placeholder="0" value={price} onChange={(e) => setPrice(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
-                </div>
-              </div>
-            )}
-            {step === 2 && (
-              <div>
-                <label className="text-sm font-semibold text-gray-300 block mb-2">Description</label>
-                <div className="flex items-center bg-[#2d2d2d] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-[#2B6CB0]">
-                  <input ref={inputRef} type="text" placeholder="Highlight the best features..." value={desc} onChange={(e) => setDesc(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} className="flex-1 bg-transparent text-white focus:outline-none placeholder-gray-500 text-lg" />
-                </div>
-              </div>
-            )}
-            <div className="flex justify-end text-xs text-gray-500 mt-2">Press Enter to continue...</div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div>
+            <label className="text-sm font-semibold text-gray-300 block mb-2">Product Title</label>
+            <input
+              type="text"
+              placeholder="e.g. Hisense 50\" QLED TV"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full bg-[#2d2d2d] rounded-xl px-4 py-3 text-white focus:outline-none placeholder-gray-500 text-lg focus:ring-2 focus:ring-[#2B6CB0]"
+              required
+            />
           </div>
-        )}
-        {!submitting && step === 3 && (
-          <div className="flex flex-col items-center justify-center gap-4 py-4">
-            <p className="text-green-500 font-medium text-lg">Ready to post!</p>
-            <button onClick={handleSubmit} className="p-4 bg-green-500 rounded-full text-white shadow-lg hover:scale-105 transition-transform"><Send size={24} /></button>
+          <div>
+            <label className="text-sm font-semibold text-gray-300 block mb-2">Price (XAF)</label>
+            <input
+              type="number"
+              placeholder="0"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="w-full bg-[#2d2d2d] rounded-xl px-4 py-3 text-white focus:outline-none placeholder-gray-500 text-lg focus:ring-2 focus:ring-[#2B6CB0]"
+              required
+            />
           </div>
-        )}
-        {submitting && <div className="text-center text-gray-500 py-6">Submitting...</div>}
+          <div>
+            <label className="text-sm font-semibold text-gray-300 block mb-2">Description</label>
+            <input
+              type="text"
+              placeholder="Highlight the best features..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full bg-[#2d2d2d] rounded-xl px-4 py-3 text-white focus:outline-none placeholder-gray-500 text-lg focus:ring-2 focus:ring-[#2B6CB0]"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full bg-[#2B6CB0] text-white py-3 rounded-full font-semibold hover:bg-[#1a4a8a] disabled:opacity-50 transition-colors mt-2"
+          >
+            {submitting ? "Posting..." : "Post Product"}
+          </button>
+        </form>
       </div>
     </div>
   );
 }
 
+// ---------- Main Admin Page ----------
 export default function AdminPage() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -116,36 +128,65 @@ export default function AdminPage() {
   const [openMenuId, setOpenMenuId] = useState(null);
   const fileInputRef = useRef(null);
   const router = useRouter();
+
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => { setSession(session); setLoading(false); });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
     supabase.auth.onAuthStateChange((_event, session) => setSession(session));
   }, []);
+
   useEffect(() => {
     if (session) {
-      supabase.from("products").select("*").order("created_at", { ascending: true }).then(({ data }) => { if (data) setProducts(data); });
+      supabase.from("products").select("*").order("created_at", { ascending: true }).then(({ data }) => {
+        if (data) setProducts(data);
+      });
     }
   }, [session]);
+
   if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-500">Loading...</div>;
   if (!session) {
     return <div className="min-h-screen flex items-center justify-center bg-gray-100"><div className="bg-white p-8 rounded-xl shadow-md"><h1 className="text-xl font-bold mb-4">Admin Login</h1><p className="text-gray-600">Please log in via the login page.</p></div></div>;
   }
+
   const handlePost = async (title, price, desc, file) => {
     const fileName = `${Date.now()}.${file.name.split(".").pop()}`;
     const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, file);
     if (uploadError) throw new Error(uploadError.message);
     const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(fileName);
-    const { error: dbError } = await supabase.from("products").insert({ title, price, description: desc || null, image_url: urlData.publicUrl });
+    const { error: dbError } = await supabase.from("products").insert({
+      title,
+      price,
+      description: desc || null,
+      image_url: urlData.publicUrl,
+    });
     if (dbError) throw new Error(dbError.message);
     const { data } = await supabase.from("products").select("*").order("created_at", { ascending: true });
     if (data) setProducts(data);
   };
+
   const handleDelete = async (id) => {
     const { error } = await supabase.from("products").delete().eq("id", id);
-    if (error) { alert("Failed to delete: " + error.message); } else { setProducts((prev) => prev.filter((p) => p.id !== id)); }
+    if (error) {
+      alert("Failed to delete: " + error.message);
+    } else {
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+    }
     setOpenMenuId(null);
   };
-  const handleLogout = async () => { await supabase.auth.signOut(); router.push("/"); };
-  const handleFileSelect = (e) => { const file = e.target.files?.[0]; if (file) setUploadFile(file); e.target.value = ""; };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (file) setUploadFile(file);
+    e.target.value = "";
+  };
+
   return (
     <div className="min-h-screen bg-[#efeae2] p-4 pb-24 relative">
       <div className="flex justify-between items-center mb-6 sticky top-0 bg-[#efeae2] py-2 z-10">
@@ -155,18 +196,34 @@ export default function AdminPage() {
           <button onClick={handleLogout} className="bg-red-50 text-red-600 px-3 py-1.5 rounded-full text-sm font-semibold shadow-sm border border-red-200 hover:bg-red-100 transition-colors flex items-center gap-1"><LogOut size={16} /> Logout</button>
         </div>
       </div>
+
       <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={handleFileSelect} />
+
       <div className="flex flex-col max-w-2xl mx-auto">
         {products.length === 0 ? (
           <div className="text-center text-gray-500 mt-10">No products yet. Tap the + button below to add one!</div>
         ) : (
           products.map((p) => (
-            <ProductChatBubble key={p.id} imageUrl={p.image_url} title={p.title} price={p.price} description={p.description} createdAt={new Date(p.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} onDelete={() => handleDelete(p.id)} isMenuOpen={openMenuId === p.id} toggleMenu={() => setOpenMenuId((prev) => (prev === p.id ? null : p.id))} />
+            <ProductChatBubble
+              key={p.id}
+              imageUrl={p.image_url}
+              title={p.title}
+              price={p.price}
+              description={p.description}
+              createdAt={new Date(p.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              onDelete={() => handleDelete(p.id)}
+              isMenuOpen={openMenuId === p.id}
+              toggleMenu={() => setOpenMenuId((prev) => (prev === p.id ? null : p.id))}
+            />
           ))
         )}
       </div>
-      <button onClick={() => fileInputRef.current?.click()} className="fixed bottom-24 right-4 bg-[#2B6CB0] text-white p-4 rounded-full shadow-lg hover:bg-[#1a4a8a] transition-colors z-40"><Plus size={28} /></button>
-      {uploadFile && <ProductPreviewModal file={uploadFile} onClose={() => setUploadFile(null)} onPost={handlePost} />}
+
+      <button onClick={() => fileInputRef.current?.click()} className="fixed bottom-24 right-4 bg-[#2B6CB0] text-white p-4 rounded-full shadow-lg hover:bg-[#1a4a8a] transition-colors z-40">
+        <Plus size={28} />
+      </button>
+
+      {uploadFile && <ProductFormModal file={uploadFile} onClose={() => setUploadFile(null)} onPost={handlePost} />}
     </div>
   );
 }
