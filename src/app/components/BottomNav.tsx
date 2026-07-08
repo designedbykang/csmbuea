@@ -18,8 +18,8 @@ export default function BottomNav() {
     });
   }, []);
 
-  // Now we ONLY hide it on the checkout flow. Admin pages will use the nav!
-  if (pathname.startsWith("/checkout")) return null;
+  // Hide bottom nav on checkout pages AND on ALL admin pages
+  if (pathname.startsWith("/checkout") || pathname.startsWith("/admin")) return null;
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
