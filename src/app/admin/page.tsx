@@ -7,7 +7,6 @@ import { Plus, X, Send, Package, LogOut, MoreVertical } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-// ---------- Product Bubble Component ----------
 function ProductChatBubble({ imageUrl, title, price, description, createdAt, onDelete, isMenuOpen, toggleMenu }) {
   return (
     <div className="flex flex-col items-end mb-4 relative group">
@@ -17,7 +16,9 @@ function ProductChatBubble({ imageUrl, title, price, description, createdAt, onD
         </button>
         {isMenuOpen && (
           <div className="absolute right-0 top-6 bg-white rounded-lg shadow-xl border border-gray-100 z-30 w-28 overflow-hidden">
-            <button onClick={() => { if (confirm("Are you sure?")) { onDelete(); } toggleMenu(); }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete</button>
+            <button onClick={() => { if (confirm("Are you sure you want to delete this product?")) { onDelete(); } toggleMenu(); }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+              Delete
+            </button>
           </div>
         )}
         <div className="relative w-full aspect-square max-h-[300px] rounded-lg overflow-hidden bg-gray-200">
@@ -41,85 +42,52 @@ function ProductChatBubble({ imageUrl, title, price, description, createdAt, onD
   );
 }
 
-// ---------- Simple Form Modal (One screen, all fields) ----------
-function ProductFormModal({ file, onClose, onPost }) {
+function ProductPreviewModal({ file, onClose, onPost }) {
+  const [step, setStep] = useState(0);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
+  const [desc, setDesc] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const inputRef = useRef(null);
   const previewUrl = URL.createObjectURL(file);
-
-  useEffect(() => {
-    return () => URL.revokeObjectURL(previewUrl);
-  }, [previewUrl]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  useEffect(() => { return () => URL.revokeObjectURL(previewUrl); }, [previewUrl]);
+  useEffect(() => { if (inputRef.current) inputRef.current.focus(); }, [step]);
+  const handleNext = () => { if (step < 2) setStep(step + 1); else setStep(3); };
+  const handleSubmit = async () => {
     setSubmitting(true);
     const priceNumber = Number(price) || 0;
-    await onPost(title, priceNumber, description, file);
+    await onPost(title, priceNumber, desc, file);
     setSubmitting(false);
     onClose();
   };
-
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
-      <button onClick={onClose} className="absolute top-4 left-4 p-2 rounded-full bg-black/50 text-white z-10">
-        <X size={28} />
-      </button>
-      <div className="flex-1 relative bg-black flex items-center justify-center min-h-0">
-        <div className="relative w-full max-w-md h-full max-h-[60vh] flex items-center justify-center">
-          <Image src={previewUrl} alt="Preview" fill className="object-contain" />
+      <button onClick={onClose} className="absolute top-4 left-4 p-2 rounded-full bg-black/50 text-white z-10"><X size={28} /></button>
+      <div className="flex-1 relative bg-black flex items-center justify-center">
+        <Image src={previewUrl} alt="Preview" fill className="object-contain" />
+      </div>
+      {step < 3 && !submitting && (
+        <div className="absolute bottom-12 left-4 right-4 flex items-center gap-2">
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder={step === 0 ? "Title" : step === 1 ? "Price (XAF)" : "Description"}
+            value={step === 0 ? title : step === 1 ? price : desc}
+            onChange={(e) => { if (step === 0) setTitle(e.target.value); else if (step === 1) setPrice(e.target.value); else setDesc(e.target.value); }}
+            onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
+            className="flex-1 bg-[#2d2d2d] rounded-full px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-green-500 placeholder:text-gray-500"
+          />
         </div>
-      </div>
-      <div className="bg-[#1a1a1a] rounded-t-3xl p-6 pb-10 shadow-2xl flex flex-col gap-4">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <label className="text-sm font-semibold text-gray-300 block mb-2">Product Title</label>
-            <input
-              type="text"
-              placeholder="e.g. Hisense 50\" QLED TV"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-[#2d2d2d] rounded-xl px-4 py-3 text-white focus:outline-none placeholder-gray-500 text-lg focus:ring-2 focus:ring-[#2B6CB0]"
-              required
-            />
-          </div>
-          <div>
-            <label className="text-sm font-semibold text-gray-300 block mb-2">Price (XAF)</label>
-            <input
-              type="number"
-              placeholder="0"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="w-full bg-[#2d2d2d] rounded-xl px-4 py-3 text-white focus:outline-none placeholder-gray-500 text-lg focus:ring-2 focus:ring-[#2B6CB0]"
-              required
-            />
-          </div>
-          <div>
-            <label className="text-sm font-semibold text-gray-300 block mb-2">Description</label>
-            <input
-              type="text"
-              placeholder="Highlight the best features..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-[#2d2d2d] rounded-xl px-4 py-3 text-white focus:outline-none placeholder-gray-500 text-lg focus:ring-2 focus:ring-[#2B6CB0]"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-[#2B6CB0] text-white py-3 rounded-full font-semibold hover:bg-[#1a4a8a] disabled:opacity-50 transition-colors mt-2"
-          >
-            {submitting ? "Posting..." : "Post Product"}
-          </button>
-        </form>
-      </div>
+      )}
+      {step === 3 && !submitting && (
+        <div className="absolute bottom-6 right-4">
+          <button onClick={handleSubmit} className="p-4 bg-green-500 rounded-full text-white shadow-lg"><Send size={24} /></button>
+        </div>
+      )}
     </div>
   );
 }
 
-// ---------- Main Admin Page ----------
 export default function AdminPage() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -192,8 +160,12 @@ export default function AdminPage() {
       <div className="flex justify-between items-center mb-6 sticky top-0 bg-[#efeae2] py-2 z-10">
         <h1 className="text-xl font-bold text-gray-800">My Products</h1>
         <div className="flex items-center gap-3">
-          <Link href="/admin/orders" className="bg-white text-[#2B6CB0] px-4 py-1.5 rounded-full text-sm font-semibold shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors flex items-center gap-1.5"><Package size={16} /> Orders</Link>
-          <button onClick={handleLogout} className="bg-red-50 text-red-600 px-3 py-1.5 rounded-full text-sm font-semibold shadow-sm border border-red-200 hover:bg-red-100 transition-colors flex items-center gap-1"><LogOut size={16} /> Logout</button>
+          <Link href="/admin/orders" className="bg-white text-[#2B6CB0] px-4 py-1.5 rounded-full text-sm font-semibold shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors flex items-center gap-1.5">
+            <Package size={16} /> Orders
+          </Link>
+          <button onClick={handleLogout} className="bg-red-50 text-red-600 px-3 py-1.5 rounded-full text-sm font-semibold shadow-sm border border-red-200 hover:bg-red-100 transition-colors flex items-center gap-1">
+            <LogOut size={16} /> Logout
+          </button>
         </div>
       </div>
 
@@ -223,7 +195,7 @@ export default function AdminPage() {
         <Plus size={28} />
       </button>
 
-      {uploadFile && <ProductFormModal file={uploadFile} onClose={() => setUploadFile(null)} onPost={handlePost} />}
+      {uploadFile && <ProductPreviewModal file={uploadFile} onClose={() => setUploadFile(null)} onPost={handlePost} />}
     </div>
   );
 }
