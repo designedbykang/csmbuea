@@ -7,7 +7,18 @@ import { Plus, X, Send, Package, LogOut, MoreVertical } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-function ProductChatBubble({ imageUrl, title, price, description, createdAt, onDelete, isMenuOpen, toggleMenu }) {
+interface ProductBubbleProps {
+  imageUrl: string;
+  title: string;
+  price: number;
+  description?: string;
+  createdAt: string;
+  onDelete: () => void;
+  isMenuOpen: boolean;
+  toggleMenu: () => void;
+}
+
+function ProductChatBubble({ imageUrl, title, price, description, createdAt, onDelete, isMenuOpen, toggleMenu }: ProductBubbleProps) {
   return (
     <div className="flex flex-col items-end mb-4 relative group">
       <div className="max-w-[85%] bg-[#dcf8c6] rounded-2xl rounded-tr-sm p-2 shadow-sm relative">
@@ -42,13 +53,19 @@ function ProductChatBubble({ imageUrl, title, price, description, createdAt, onD
   );
 }
 
-function ProductPreviewModal({ file, onClose, onPost }) {
+interface ModalProps {
+  file: File;
+  onClose: () => void;
+  onPost: (title: string, price: number, desc: string, file: File) => Promise<void>;
+}
+
+function ProductPreviewModal({ file, onClose, onPost }: ModalProps) {
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [desc, setDesc] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const previewUrl = URL.createObjectURL(file);
   useEffect(() => { return () => URL.revokeObjectURL(previewUrl); }, [previewUrl]);
   useEffect(() => { if (inputRef.current) inputRef.current.focus(); }, [step]);
@@ -89,12 +106,12 @@ function ProductPreviewModal({ file, onClose, onPost }) {
 }
 
 export default function AdminPage() {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState([]);
-  const [uploadFile, setUploadFile] = useState(null);
-  const [openMenuId, setOpenMenuId] = useState(null);
-  const fileInputRef = useRef(null);
+  const [products, setProducts] = useState<any[]>([]);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -118,7 +135,7 @@ export default function AdminPage() {
     return <div className="min-h-screen flex items-center justify-center bg-gray-100"><div className="bg-white p-8 rounded-xl shadow-md"><h1 className="text-xl font-bold mb-4">Admin Login</h1><p className="text-gray-600">Please log in via the login page.</p></div></div>;
   }
 
-  const handlePost = async (title, price, desc, file) => {
+  const handlePost = async (title: string, price: number, desc: string, file: File) => {
     const fileName = `${Date.now()}.${file.name.split(".").pop()}`;
     const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, file);
     if (uploadError) throw new Error(uploadError.message);
@@ -134,7 +151,7 @@ export default function AdminPage() {
     if (data) setProducts(data);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     const { error } = await supabase.from("products").delete().eq("id", id);
     if (error) {
       alert("Failed to delete: " + error.message);
@@ -149,7 +166,7 @@ export default function AdminPage() {
     router.push("/");
   };
 
-  const handleFileSelect = (e) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setUploadFile(file);
     e.target.value = "";
