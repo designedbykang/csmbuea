@@ -94,7 +94,7 @@ Looking forward to hearing from you!`;
       </Link>
 
       <div className="flex flex-col gap-6">
-        <div className="bg-[#F6AD55] text-white p-4 rounded-2xl rounded-tl-none shadow-sm">
+        <div className="bg-brand-yellow text-white p-4 rounded-2xl rounded-tl-none shadow-sm">
           <p className="text-lg font-semibold flex items-center">
             Almost done! <Hand size={20} className="ml-2" />
           </p>
