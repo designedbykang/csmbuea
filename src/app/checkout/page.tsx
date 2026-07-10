@@ -121,7 +121,7 @@ Looking forward to hearing from you!`;
             <button
               onClick={handleNext}
               disabled={!form.name.trim()}
-              className="mt-4 w-full bg-[#2B6CB0] text-white py-3 rounded-full font-semibold hover:bg-[#1a4a8a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="mt-4 w-full bg-brand-red text-white py-3 rounded-full font-semibold hover:bg-[#1a4a8a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Next
             </button>
@@ -141,7 +141,7 @@ Looking forward to hearing from you!`;
             <button
               onClick={handleNext}
               disabled={!form.phone.trim()}
-              className="mt-4 w-full bg-[#2B6CB0] text-white py-3 rounded-full font-semibold hover:bg-[#1a4a8a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="mt-4 w-full bg-brand-red text-white py-3 rounded-full font-semibold hover:bg-[#1a4a8a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Next
             </button>
@@ -156,7 +156,7 @@ Looking forward to hearing from you!`;
                 onClick={() => setForm({ ...form, deliveryType: "delivery" })}
                 className={`flex-1 py-3 rounded-full border font-semibold transition-colors ${
                   form.deliveryType === "delivery"
-                    ? "bg-[#2B6CB0] text-white border-[#2B6CB0]"
+                    ? "bg-brand-red text-white border-[#2B6CB0]"
                     : "bg-white text-gray-700 border-gray-300 hover:border-[#2B6CB0]"
                 }`}
               >
@@ -166,7 +166,7 @@ Looking forward to hearing from you!`;
                 onClick={() => setForm({ ...form, deliveryType: "pickup" })}
                 className={`flex-1 py-3 rounded-full border font-semibold transition-colors ${
                   form.deliveryType === "pickup"
-                    ? "bg-[#2B6CB0] text-white border-[#2B6CB0]"
+                    ? "bg-brand-red text-white border-[#2B6CB0]"
                     : "bg-white text-gray-700 border-gray-300 hover:border-[#2B6CB0]"
                 }`}
               >
@@ -175,7 +175,7 @@ Looking forward to hearing from you!`;
             </div>
             <button
               onClick={handleNext}
-              className="mt-4 w-full bg-[#2B6CB0] text-white py-3 rounded-full font-semibold hover:bg-[#1a4a8a] transition-colors"
+              className="mt-4 w-full bg-brand-red text-white py-3 rounded-full font-semibold hover:bg-[#1a4a8a] transition-colors"
             >
               Next
             </button>
@@ -194,7 +194,7 @@ Looking forward to hearing from you!`;
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="mt-4 w-full bg-[#2B6CB0] text-white py-3 rounded-full font-semibold hover:bg-[#1a4a8a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="mt-4 w-full bg-brand-red text-white py-3 rounded-full font-semibold hover:bg-[#1a4a8a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {submitting ? "Sending..." : "Finish & Chat on WhatsApp"}
             </button>
@@ -209,7 +209,7 @@ Looking forward to hearing from you!`;
             <div
               key={s}
               className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                s <= step ? "bg-[#2B6CB0]" : "bg-gray-300"
+                s <= step ? "bg-brand-red" : "bg-gray-300"
               }`}
             />
           ))}
