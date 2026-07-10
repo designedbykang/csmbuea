@@ -4,10 +4,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#2B6CB0',
-        secondary: '#F6AD55',
+        'brand-red': '#9F0D1A',      // Deep Crimson (Primary)
+        'brand-yellow': '#FFD700',   // Golden Yellow (Accent)
+        'brand-black': '#1a1a1a',    // Dark input backgrounds
+        'brand-bg': '#efeae2',       // WhatsApp-style bg
       },
     },
   },
   plugins: [],
-};
+}
