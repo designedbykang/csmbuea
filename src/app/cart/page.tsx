@@ -58,7 +58,7 @@ export default function CartPage() {
         </div>
         <Link 
           href="/checkout" 
-          className="block w-full bg-[#2B6CB0] text-white text-center py-3 rounded-full font-semibold text-lg hover:bg-[#1a4a8a] transition-colors"
+          className="block w-full bg-brand-red text-white text-center py-3 rounded-full font-semibold text-lg hover:bg-[#1a4a8a] transition-colors"
         >
           Continue →
         </Link>
