@@ -208,7 +208,7 @@ export default function AdminPage() {
         )}
       </div>
 
-      <button onClick={() => fileInputRef.current?.click()} className="fixed bottom-24 right-4 bg-[#2B6CB0] text-white p-4 rounded-full shadow-lg hover:bg-[#1a4a8a] transition-colors z-40">
+      <button onClick={() => fileInputRef.current?.click()} className="fixed bottom-24 right-4 bg-brand-red text-white p-4 rounded-full shadow-lg hover:bg-[#1a4a8a] transition-colors z-40">
         <Plus size={28} />
       </button>
 
