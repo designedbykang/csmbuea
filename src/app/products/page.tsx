@@ -51,7 +51,7 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-white p-4 pb-24 relative">
       <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pt-2 pb-2 z-10">
-        <h1 className="text-2xl font-bold text-gray-800">CSM Buea</h1>
+        <h1 className="text-2xl font-bold text-brand-black">CSM Buea</h1>
         <div className="relative p-2 bg-gray-100 rounded-full">
           <ShoppingCart size={24} />
           {cartCount > 0 && (
@@ -77,7 +77,7 @@ export default function ProductsPage() {
                 {p.description && <p className="text-xs text-gray-500 mt-1 line-clamp-2">{p.description}</p>}
                 <button 
                   onClick={() => addToCart(p)}
-                  className="mt-3 w-full bg-[#2B6CB0] text-white py-1.5 rounded-full text-sm font-medium hover:bg-[#1a4a8a] active:scale-95 transition-all"
+                  className="mt-3 w-full bg-brand-red text-white py-1.5 rounded-full text-sm font-medium hover:bg-[#1a4a8a] active:scale-95 transition-all"
                 >
                   Add to Cart
                 </button>
