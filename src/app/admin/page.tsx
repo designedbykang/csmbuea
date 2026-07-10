@@ -177,7 +177,7 @@ export default function AdminPage() {
       <div className="flex justify-between items-center mb-6 sticky top-0 bg-[#efeae2] py-2 z-10">
         <h1 className="text-xl font-bold text-gray-800">My Products</h1>
         <div className="flex items-center gap-3">
-          <Link href="/admin/orders" className="bg-white text-[#2B6CB0] px-4 py-1.5 rounded-full text-sm font-semibold shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors flex items-center gap-1.5">
+          <Link href="/admin/orders" className="bg-brand-yellow text-brand-black px-4 py-1.5 rounded-full text-sm font-semibold shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors flex items-center gap-1.5">
             <Package size={16} /> Orders
           </Link>
           <button onClick={handleLogout} className="bg-red-50 text-red-600 px-3 py-1.5 rounded-full text-sm font-semibold shadow-sm border border-red-200 hover:bg-red-100 transition-colors flex items-center gap-1">
