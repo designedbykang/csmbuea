@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './global.css'
 import { CartProvider } from '@/context/CartContext'
-import BottomNav from '@/components/BottomNav'
+import Header from '@/components/Header' // <-- Replace BottomNav with Header
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,10 +20,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <CartProvider>
-          <div className="pb-20">
+          <div className="pb-0"> {/* Remove the pb-20 padding */}
+            <Header /> {/* Header contains the SideMenu and Cart */}
             {children}
           </div>
-          <BottomNav />
         </CartProvider>
       </body>
     </html>
