@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
-  X, Home, Package, ShoppingBag, Heart, Clock, Phone, Info, HelpCircle, LogOut, User,
-  Utensils, Armchair, Smartphone, WashingMachine, Lightbulb, Trees, Layers, Image as ImageIcon, MoreHorizontal,
-  FileText, ShieldCheck, Mail, CreditCard, Instagram, Youtube, Twitter
+  X, Home, Package, Clock, Phone, Info, HelpCircle, 
+  Utensils, Armchair, Smartphone, WashingMachine, Lightbulb, Trees, Layers, Palette, MoreHorizontal,
+  FileText, ShieldCheck, Mail, CreditCard, Instagram, Youtube
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -16,7 +16,7 @@ interface SideMenuProps {
 }
 
 const iconMap: Record<string, any> = {
-  Utensils, Armchair, Smartphone, WashingMachine, Lightbulb, Trees, Layers, ImageIcon, MoreHorizontal
+  Utensils, Armchair, Smartphone, WashingMachine, Lightbulb, Trees, Layers, Palette, MoreHorizontal
 };
 
 export default function SideMenu({ isOpen, onClose }: SideMenuProps) {
@@ -127,7 +127,8 @@ export default function SideMenu({ isOpen, onClose }: SideMenuProps) {
             <div className="flex gap-2">
               <a href="https://instagram.com" target="_blank" className="p-1.5 bg-gray-200 rounded-full hover:bg-brand-red hover:text-white transition-colors text-gray-600"><Instagram size={16} /></a>
               <a href="https://youtube.com" target="_blank" className="p-1.5 bg-gray-200 rounded-full hover:bg-brand-red hover:text-white transition-colors text-gray-600"><Youtube size={16} /></a>
-              <a href="https://twitter.com" target="_blank" className="p-1.5 bg-gray-200 rounded-full hover:bg-brand-red hover:text-white transition-colors text-gray-600"><Twitter size={16} /></a>
+              {/* Twitter is now officially X in Lucide */}
+              <a href="https://twitter.com" target="_blank" className="p-1.5 bg-gray-200 rounded-full hover:bg-brand-red hover:text-white transition-colors text-gray-600"><X size={16} /></a>
             </div>
           </div>
 
