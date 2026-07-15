@@ -3,10 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default async function CategoryPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  // 1. Await the params since they are now a Promise in Next.js 15
+  const { slug } = await params;
 
-  // 1. Fetch the category details
+  // 2. Fetch the category details
   const { data: category } = await supabase
     .from("categories")
     .select("*")
@@ -15,7 +16,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
 
   if (!category) return <div className="p-6 text-red-500">Category not found.</div>;
 
-  // 2. Fetch products for this category
+  // 3. Fetch products for this category
   const { data: products } = await supabase
     .from("products")
     .select("*")
@@ -28,13 +29,11 @@ export default async function CategoryPage({ params }: { params: { slug: string 
         <ArrowLeft size={20} className="mr-2" /> Back
       </Link>
 
-      {/* Category Banner */}
       <div className="bg-brand-red text-white p-6 rounded-2xl mb-6 shadow-md">
         <h1 className="text-3xl font-bold">{category.name}</h1>
         <p className="text-sm opacity-90 mt-1">Explore our collection of {category.name.toLowerCase()} products.</p>
       </div>
 
-      {/* Product Grid */}
       <div className="grid grid-cols-2 gap-4 max-w-2xl mx-auto">
         {products?.length === 0 ? (
           <div className="col-span-2 text-center text-gray-500 py-8">No products found in this category.</div>
