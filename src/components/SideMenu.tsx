@@ -1,153 +1,56 @@
-"use client";
-
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { 
-  X, Home, Package, ShoppingBag, Heart, Clock, Phone, Info, HelpCircle, LogOut, User,
-  Utensils, Armchair, Smartphone, WashingMachine, Lightbulb, Trees, Carpet, Image as ImageIcon, MoreHorizontal,
-  // Footer Icons
-  FileText, ShieldCheck, Mail, CreditCard, Instagram, Youtube, Twitter
-} from "lucide-react";
-import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
-interface SideMenuProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  // 1. Await the params since they are now a Promise in Next.js 15
+  const { slug } = await params;
 
-const iconMap: Record<string, any> = {
-  Utensils, Armchair, Smartphone, WashingMachine, Lightbulb, Trees, Carpet, ImageIcon, MoreHorizontal
-};
+  // 2. Fetch the category details
+  const { data: category } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("slug", slug)
+    .single();
 
-export default function SideMenu({ isOpen, onClose }: SideMenuProps) {
-  const router = useRouter();
-  const [categories, setCategories] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  if (!category) return <div className="p-6 text-red-500">Category not found.</div>;
 
-  useEffect(() => {
-    if (isOpen) {
-      supabase.from("categories").select("*").order("name").then(({ data }) => {
-        if (data) setCategories(data);
-        setLoading(false);
-      });
-    }
-  }, [isOpen]);
-
-  const handleNavigation = (path: string) => {
-    router.push(path);
-    onClose();
-  };
-
-  if (!isOpen) return null;
+  // 3. Fetch products for this category
+  const { data: products } = await supabase
+    .from("products")
+    .select("*")
+    .eq("category_id", category.id)
+    .order("created_at", { ascending: false });
 
   return (
-    <div className="fixed inset-0 z-50 flex">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={onClose} />
-      <div className="relative w-[80%] max-w-sm bg-white h-full shadow-2xl flex flex-col animate-slide-in-left">
-        
-        {/* --- HEADER --- */}
-        <div className="p-6 bg-brand-red text-white flex justify-between items-center shrink-0">
-          <h2 className="text-xl font-bold">CSM Buea</h2>
-          <button onClick={onClose} className="p-1 hover:bg-white/20 rounded-full transition-colors">
-            <X size={24} />
-          </button>
-        </div>
+    <div className="min-h-screen bg-brand-bg p-4 pb-24">
+      <Link href="/" className="inline-flex items-center text-gray-600 mb-4 hover:text-brand-red">
+        <ArrowLeft size={20} className="mr-2" /> Back
+      </Link>
 
-        {/* --- SCROLLABLE MIDDLE SECTION --- */}
-        <div className="flex-1 overflow-y-auto py-4 px-4 space-y-1">
-          {/* Quick Links */}
-          <button onClick={() => handleNavigation("/")} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors text-gray-700">
-            <Home size={20} className="text-brand-red" />
-            <span className="font-medium">Home</span>
-          </button>
-          <button onClick={() => handleNavigation("/products")} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors text-gray-700">
-            <Package size={20} className="text-brand-red" />
-            <span className="font-medium">All Products</span>
-          </button>
+      <div className="bg-brand-red text-white p-6 rounded-2xl mb-6 shadow-md">
+        <h1 className="text-3xl font-bold">{category.name}</h1>
+        <p className="text-sm opacity-90 mt-1">Explore our collection of {category.name.toLowerCase()} products.</p>
+      </div>
 
-          <div className="border-t border-gray-200 my-2"></div>
-
-          {/* Shop by Category Section */}
-          <div className="px-3 py-2 text-sm font-semibold text-gray-500 uppercase tracking-wider">Shop by Category</div>
-          
-          {loading ? (
-            <div className="p-4 text-center text-gray-400 text-sm">Loading...</div>
-          ) : (
-            categories.map((cat) => {
-              const IconComponent = iconMap[cat.icon] || Package;
-              return (
-                <button 
-                  key={cat.id}
-                  onClick={() => handleNavigation(`/category/${cat.slug}`)}
-                  className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-100 transition-colors text-gray-700 group"
-                >
-                  <div className="flex items-center gap-3">
-                    <IconComponent size={20} className="text-brand-red" />
-                    <span className="font-medium">{cat.name}</span>
-                  </div>
-                  <span className="text-gray-300 group-hover:translate-x-1 transition-transform">›</span>
-                </button>
-              );
-            })
-          )}
-          
-          {/* My Orders Link (merged into scrollable area for consistency) */}
-          <div className="border-t border-gray-200 my-2"></div>
-          <button onClick={() => handleNavigation("/orders")} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-colors text-gray-700">
-            <Clock size={20} className="text-brand-red" />
-            <span className="font-medium">My Orders</span>
-          </button>
-        </div>
-
-        {/* --- FOOTER SECTION --- */}
-        <div className="shrink-0 bg-gray-50 border-t border-gray-200 p-4">
-          
-          {/* Legal & Support Links (Grid Layout) */}
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-4">
-            <button onClick={() => handleNavigation("/faq")} className="flex items-center gap-2 text-xs text-gray-600 hover:text-brand-red transition-colors">
-              <HelpCircle size={14} /> FAQs
-            </button>
-            <button onClick={() => handleNavigation("/contact")} className="flex items-center gap-2 text-xs text-gray-600 hover:text-brand-red transition-colors">
-              <Mail size={14} /> Contact Us
-            </button>
-            <button onClick={() => handleNavigation("/about")} className="flex items-center gap-2 text-xs text-gray-600 hover:text-brand-red transition-colors">
-              <Info size={14} /> About Us
-            </button>
-            <button onClick={() => handleNavigation("/terms")} className="flex items-center gap-2 text-xs text-gray-600 hover:text-brand-red transition-colors">
-              <FileText size={14} /> Terms
-            </button>
-            <button onClick={() => handleNavigation("/privacy")} className="flex items-center gap-2 text-xs text-gray-600 hover:text-brand-red transition-colors">
-              <ShieldCheck size={14} /> Privacy Policy
-            </button>
-          </div>
-
-          {/* Payment Methods */}
-          <div className="flex items-center gap-4 mb-4">
-            <span className="text-xs font-medium text-gray-500">We accept:</span>
-            <div className="flex gap-2">
-              <div className="bg-white border border-gray-200 rounded p-1 shadow-sm"><CreditCard size={16} className="text-gray-600" /></div>
-              <div className="bg-white border border-gray-200 rounded p-1 shadow-sm"><Smartphone size={16} className="text-gray-600" /></div>
-              <div className="bg-gray-800 rounded p-1"><span className="text-[10px] text-white font-bold px-1">MOMO</span></div>
+      <div className="grid grid-cols-2 gap-4 max-w-2xl mx-auto">
+        {products?.length === 0 ? (
+          <div className="col-span-2 text-center text-gray-500 py-8">No products found in this category.</div>
+        ) : (
+          products?.map((p) => (
+            <div key={p.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+              <div className="relative w-full aspect-square bg-gray-100">
+                <Image src={p.image_url} alt={p.title} fill className="object-cover" />
+              </div>
+              <div className="p-3 flex flex-col flex-1">
+                <h3 className="font-semibold text-gray-900 text-sm leading-tight">{p.title}</h3>
+                <p className="text-sm font-medium text-brand-red mt-1">{p.price.toLocaleString()} XAF</p>
+                {p.description && <p className="text-xs text-gray-500 mt-1 line-clamp-2">{p.description}</p>}
+              </div>
             </div>
-          </div>
-
-          {/* Follow Us (Social Icons) */}
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-xs font-medium text-gray-500">Follow us:</span>
-            <div className="flex gap-2">
-              <a href="https://instagram.com" target="_blank" className="p-1.5 bg-gray-200 rounded-full hover:bg-brand-red hover:text-white transition-colors text-gray-600"><Instagram size={16} /></a>
-              <a href="https://youtube.com" target="_blank" className="p-1.5 bg-gray-200 rounded-full hover:bg-brand-red hover:text-white transition-colors text-gray-600"><Youtube size={16} /></a>
-              <a href="https://twitter.com" target="_blank" className="p-1.5 bg-gray-200 rounded-full hover:bg-brand-red hover:text-white transition-colors text-gray-600"><Twitter size={16} /></a>
-            </div>
-          </div>
-
-          {/* Copyright */}
-          <div className="text-[10px] text-gray-400 text-center mt-2 pt-2 border-t border-gray-200">
-            © {new Date().getFullYear()} CSM Buea. All rights reserved.
-          </div>
-
-        </div>
+          ))
+        )}
       </div>
     </div>
   );
