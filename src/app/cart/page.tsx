@@ -50,7 +50,8 @@ export default function CartPage() {
         ))}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg z-50">
+      {/* z-40 ensures it sits BELOW the SideMenu (z-50) but ABOVE the page content */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg z-40">
         <div className="flex justify-between items-center mb-4">
           <span className="font-semibold text-gray-800">Total</span>
           <span className="font-bold text-xl text-gray-900">{total.toLocaleString()} XAF</span>
