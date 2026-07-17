@@ -14,19 +14,32 @@ export default function Header() {
 
   return (
     <>
-      <header className="flex justify-between items-center px-4 py-3 bg-white/80 backdrop-blur-sm h-[60px] w-full">
+      {/* No conditional top spacing. It just sits at the top of the flex column */}
+      <header className="sticky top-0 z-30 bg-white border-b border-gray-100 px-4 py-3 flex justify-between items-center shadow-sm shrink-0 h-[64px]">
+        {/* Hamburger */}
         <button onClick={() => setIsMenuOpen(true)} className="text-brand-black p-1 hover:bg-gray-100 rounded-full transition-colors">
           <Menu size={28} />
         </button>
 
-        <Link href="/" className="flex items-center h-8 relative w-auto">
-          <div className="flex items-center">
-            <span className="text-xl font-bold text-brand-red tracking-tight">
-              CSM <span className="text-brand-black">Buea</span>
-            </span>
-          </div>
+        {/* Logo Container - Fixed height, aspect ratio-safe */}
+        <Link href="/" className="relative h-8 w-32 shrink-0 flex items-center justify-center">
+          {/* Placeholder text - DELETE this when you upload logo.svg */}
+          <span className="text-xl font-bold text-brand-red tracking-tight">
+            CSM <span className="text-brand-black">Buea</span>
+          </span>
+          
+          {/* TODO: Uncomment this when you upload logo.svg to /public
+          <Image
+            src="/logo.svg"
+            alt="CSM Buea"
+            fill
+            className="object-contain"
+            priority
+          />
+          */}
         </Link>
 
+        {/* Cart Icon */}
         <Link href="/cart" className="relative p-1 hover:bg-gray-100 rounded-full transition-colors">
           <ShoppingCart size={26} className="text-brand-black" />
           {cartCount > 0 && (
@@ -37,6 +50,7 @@ export default function Header() {
         </Link>
       </header>
 
+      {/* Side Menu - Renders globally inside layout */}
       <SideMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </>
   );
