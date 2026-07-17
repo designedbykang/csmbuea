@@ -41,10 +41,12 @@ export default function SideMenu({ isOpen, onClose }: SideMenuProps) {
   if (!isOpen) return null;
 
   return (
-    /* z-50 ensures it sits above the checkout button (z-40) */
-    <div className="fixed inset-0 z-50 flex">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={onClose} />
-      <div className="relative w-[80%] max-w-sm bg-white h-full shadow-2xl flex flex-col animate-slide-in-left">
+    <div className="fixed inset-0 z-50 flex pointer-events-none">
+      {/* Overlay - allows click to close */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity pointer-events-auto" onClick={onClose} />
+      
+      {/* Drawer panel - prevents clicks inside from leaking */}
+      <div className="relative w-[80%] max-w-sm bg-white h-full shadow-2xl flex flex-col animate-slide-in-left pointer-events-auto">
         
         <div className="p-6 bg-brand-red text-white flex justify-between items-center shrink-0">
           <h2 className="text-xl font-bold">CSM Buea</h2>
