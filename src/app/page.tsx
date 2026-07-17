@@ -1,16 +1,18 @@
 import Link from "next/link";
 import { 
   ShoppingBag, Sparkle, ChevronRight, 
-  Music2, Facebook, MessageCircle, MapPin 
+  MessageCircle, MapPin 
 } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen bg-white overflow-hidden flex flex-col items-center py-6 px-4">
+    <div className="relative min-h-screen bg-white overflow-hidden flex flex-col items-center pt-24 pb-10 px-4">
       
-      {/* --- Top Notification Banner --- */}
-      <div className="w-full max-w-2xl bg-brand-red text-white text-center text-sm font-semibold py-2.5 rounded-full mb-6 shadow-sm border border-brand-red/50">
-        🚀 We deliver to Buea, Limbe & nationwide! Shop with confidence.
+      {/* --- Fixed Top Notification Band (Marquee) --- */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-brand-red text-white py-3 overflow-hidden whitespace-nowrap border-b border-brand-red/20 shadow-md">
+        <div className="animate-marquee inline-block font-medium text-sm tracking-wide">
+          🚀 We deliver to Buea, Limbe & nationwide! Shop with confidence. &nbsp;&nbsp; 🚀 We deliver to Buea, Limbe & nationwide! Shop with confidence. &nbsp;&nbsp; 🚀 We deliver to Buea, Limbe & nationwide! Shop with confidence. &nbsp;&nbsp; 
+        </div>
       </div>
 
       {/* --- Background Organic Shapes (Kept for the hero vibe) --- */}
@@ -37,7 +39,7 @@ export default function Home() {
       {/* --- Linktree Buttons --- */}
       <div className="relative z-10 w-full max-w-md flex flex-col gap-3 mt-4">
         
-        {/* 1. Browse Catalog (The primary CTA) */}
+        {/* 1. Browse Catalog (The Primary, Prominent CTA) */}
         <Link 
           href="/products"
           className="group flex items-center justify-between w-full bg-brand-red text-white px-6 py-4 rounded-2xl shadow-md hover:bg-[#7a0a14] hover:scale-[1.02] transition-all duration-200"
@@ -49,12 +51,12 @@ export default function Home() {
           <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
         </Link>
 
-        {/* 2. WhatsApp */}
+        {/* 2. WhatsApp (Muted Uniform Gray) */}
         <a 
           href="https://wa.me/237682200403" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="group flex items-center justify-between w-full bg-[#25D366] text-white px-6 py-4 rounded-2xl shadow-md hover:bg-[#1ebe56] hover:scale-[1.02] transition-all duration-200"
+          className="group flex items-center justify-between w-full bg-gray-200 text-gray-800 px-6 py-4 rounded-2xl shadow-sm hover:bg-gray-300 hover:scale-[1.02] transition-all duration-200"
         >
           <div className="flex items-center gap-3">
             <MessageCircle size={22} />
@@ -63,40 +65,12 @@ export default function Home() {
           <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
         </a>
 
-        {/* 3. TikTok */}
-        <a 
-          href="https://tiktok.com/@csmbuea" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="group flex items-center justify-between w-full bg-black text-white px-6 py-4 rounded-2xl shadow-md hover:bg-gray-900 hover:scale-[1.02] transition-all duration-200"
-        >
-          <div className="flex items-center gap-3">
-            <Music2 size={22} />
-            <span className="text-lg font-bold uppercase tracking-wide">Follow on TikTok</span>
-          </div>
-          <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-        </a>
-
-        {/* 4. Facebook */}
-        <a 
-          href="https://facebook.com/csmbuea" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="group flex items-center justify-between w-full bg-[#1877F2] text-white px-6 py-4 rounded-2xl shadow-md hover:bg-[#1662d9] hover:scale-[1.02] transition-all duration-200"
-        >
-          <div className="flex items-center gap-3">
-            <Facebook size={22} />
-            <span className="text-lg font-bold uppercase tracking-wide">Follow on Facebook</span>
-          </div>
-          <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-        </a>
-
-        {/* 5. Store Location (Google Maps) */}
+        {/* 3. Store Location (Muted Uniform Gray) */}
         <a 
           href="https://www.google.com/maps/search/?api=1&query=St.+Luke+Junction,+Buea" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="group flex items-center justify-between w-full bg-brand-yellow text-brand-black px-6 py-4 rounded-2xl shadow-md hover:bg-[#e6c200] hover:scale-[1.02] transition-all duration-200"
+          className="group flex items-center justify-between w-full bg-gray-200 text-gray-800 px-6 py-4 rounded-2xl shadow-sm hover:bg-gray-300 hover:scale-[1.02] transition-all duration-200"
         >
           <div className="flex items-center gap-3">
             <MapPin size={22} />
@@ -104,6 +78,8 @@ export default function Home() {
           </div>
           <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
         </a>
+
+        {/* (You can easily add back TikTok & Facebook here with the same gray styling if desired) */}
 
       </div>
 
