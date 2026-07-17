@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ShoppingCart, Menu } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useState } from "react";
-import SideMenu from "./SideMenu"; // We'll create this next
+import SideMenu from "./SideMenu";
 
 export default function Header() {
   const { items } = useCart();
@@ -13,8 +13,8 @@ export default function Header() {
 
   return (
     <>
-      {/* The actual Header Bar */}
-      <header className="sticky top-0 z-40 bg-white border-b border-gray-100 px-4 py-3 flex justify-between items-center shadow-sm">
+      {/* The actual Header Bar - pushed down 44px to sit below the marquee */}
+      <header className="sticky top-[44px] z-40 bg-white border-b border-gray-100 px-4 py-3 flex justify-between items-center shadow-sm">
         {/* Hamburger Button */}
         <button onClick={() => setIsMenuOpen(true)} className="text-brand-black p-1 hover:bg-gray-100 rounded-full transition-colors">
           <Menu size={28} />
