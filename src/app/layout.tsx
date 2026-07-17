@@ -21,11 +21,11 @@ export default function RootLayout({
       <body className={`${montserrat.className} flex flex-col min-h-screen bg-white`}>
         <CartProvider>
           <FixedTopContainer />
-          <main className="flex-1 w-full pt-24 pb-24">
+          <main className="flex-1 w-full">
             {children}
           </main>
         </CartProvider>
       </body>
     </html>
-  );
+  )
 }
