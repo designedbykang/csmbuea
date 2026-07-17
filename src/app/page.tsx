@@ -6,7 +6,7 @@ import {
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen bg-white overflow-hidden flex flex-col items-center pt-[100px] pb-10 px-4">
+    <div className="relative min-h-screen bg-white overflow-hidden flex flex-col items-center pt-[144px] pb-10 px-4">
       
       {/* --- Fixed Top Notification Band (Marquee) --- */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-brand-red text-white py-2 overflow-hidden border-b border-brand-red/20 shadow-md h-[44px] flex items-center">
