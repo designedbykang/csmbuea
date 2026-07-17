@@ -1,13 +1,9 @@
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
-  // 1. Await the params since they are now a Promise in Next.js 15
   const { slug } = await params;
 
-  // 2. Fetch the category details
   const { data: category } = await supabase
     .from("categories")
     .select("*")
@@ -16,7 +12,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   if (!category) return <div className="p-6 text-red-500">Category not found.</div>;
 
-  // 3. Fetch products for this category
   const { data: products } = await supabase
     .from("products")
     .select("*")
@@ -25,10 +20,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   return (
     <div className="min-h-screen bg-brand-bg p-4 pb-24">
-      <Link href="/" className="inline-flex items-center text-gray-600 mb-4 hover:text-brand-red">
-        <ArrowLeft size={20} className="mr-2" /> Back
-      </Link>
-
       <div className="bg-brand-red text-white p-6 rounded-2xl mb-6 shadow-md">
         <h1 className="text-3xl font-bold">{category.name}</h1>
         <p className="text-sm opacity-90 mt-1">Explore our collection of {category.name.toLowerCase()} products.</p>
