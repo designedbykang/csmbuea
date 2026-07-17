@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Montserrat } from 'next/font/google' // <-- Swapped to Montserrat
 import './global.css'
 import { CartProvider } from '@/context/CartContext'
-import Header from '@/components/Header' // <-- Replace BottomNav with Header
+import Header from '@/components/Header'
 
-const inter = Inter({ subsets: ['latin'] })
+const montserrat = Montserrat({ subsets: ['latin'] }) // <-- Using Montserrat
 
 export const metadata: Metadata = {
   title: 'CSM Buea',
@@ -18,10 +18,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={montserrat.className}> {/* <-- Applied to body */}
         <CartProvider>
-          <div className="pb-0"> {/* Remove the pb-20 padding */}
-            <Header /> {/* Header contains the SideMenu and Cart */}
+          <div className="pb-0">
+            <Header />
             {children}
           </div>
         </CartProvider>
