@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 import './global.css'
 import { CartProvider } from '@/context/CartContext'
-import FixedTopContainer from '@/components/FixedTopContainer' // <-- New Import
+import FixedTopContainer from '@/components/FixedTopContainer'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 
@@ -20,11 +20,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${montserrat.className} flex flex-col min-h-screen bg-white`}>
         <CartProvider>
-          {/* The Parent Container for Marquee and Header */}
           <FixedTopContainer />
-          
-          {/* The Main Content Area - flows naturally below the sticky parent */}
-          <main className="flex-1 w-full">
+          {/* Added pt-24 to account for the fixed header height, and pb-24 for bottom safe-area */}
+          <main className="flex-1 w-full pt-24 pb-24">
             {children}
           </main>
         </CartProvider>
