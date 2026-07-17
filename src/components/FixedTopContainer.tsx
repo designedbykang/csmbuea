@@ -8,8 +8,8 @@ export default function FixedTopContainer() {
   const isHome = pathname === "/";
 
   return (
-    <div className="sticky top-0 z-40 bg-white flex flex-col w-full shadow-sm border-b border-gray-100">
-      {/* Child 1: Marquee - Only rendered when on the homepage */}
+    /* Changed to fixed, added backdrop blur, translucent bg, and safe-area-top padding */
+    <div className="fixed top-0 left-0 right-0 z-40 w-full flex flex-col bg-white/80 backdrop-blur-md border-b border-gray-200/40 pt-[env(safe-area-inset-top,0px)]">
       {isHome && (
         <div className="bg-brand-red text-white py-2 overflow-hidden border-b border-brand-red/20 h-[44px] flex items-center">
           <div className="flex whitespace-nowrap animate-marquee">
@@ -18,8 +18,6 @@ export default function FixedTopContainer() {
           </div>
         </div>
       )}
-      
-      {/* Child 2: Header - Knows its physical position relative to the parent */}
       <Header />
     </div>
   );
