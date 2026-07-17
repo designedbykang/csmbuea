@@ -6,12 +6,13 @@ import {
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen bg-white overflow-hidden flex flex-col items-center pt-24 pb-10 px-4">
+    <div className="relative min-h-screen bg-white overflow-hidden flex flex-col items-center pt-[100px] pb-10 px-4">
       
       {/* --- Fixed Top Notification Band (Marquee) --- */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-brand-red text-white py-3 overflow-hidden whitespace-nowrap border-b border-brand-red/20 shadow-md">
-        <div className="animate-marquee inline-block font-medium text-sm tracking-wide">
-           We deliver to Buea, Limbe & nationwide! Shop with confidence. &nbsp;&nbsp;  We deliver to Buea, Limbe & nationwide! Shop with confidence. &nbsp;&nbsp;  We deliver to Buea, Limbe & nationwide! Shop with confidence. &nbsp;&nbsp; 
+      <div className="fixed top-0 left-0 right-0 z-50 bg-brand-red text-white py-2 overflow-hidden border-b border-brand-red/20 shadow-md h-[44px] flex items-center">
+        <div className="flex whitespace-nowrap animate-marquee">
+          <span className="mx-4 text-sm font-bold tracking-wider">SHOP WITH CONFIDENCE. WE DELIVER NATIONWIDE, DELIVERY WITHIN BUEA IS FREE!!!</span>
+          <span className="mx-4 text-sm font-bold tracking-wider">SHOP WITH CONFIDENCE. WE DELIVER NATIONWIDE, DELIVERY WITHIN BUEA IS FREE!!!</span>
         </div>
       </div>
 
@@ -20,24 +21,24 @@ export default function Home() {
       <div className="absolute top-20 -right-32 w-[500px] h-[500px] border-[20px] border-brand-red/10 rounded-[50%] rotate-12 pointer-events-none" />
       <Sparkle className="absolute top-32 right-8 w-8 h-8 text-brand-yellow animate-pulse pointer-events-none" />
 
-      {/* --- Main Typography Hero --- */}
-      <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mt-2 mb-8">
-        <h1 className="text-7xl md:text-8xl font-black uppercase leading-[0.8] tracking-tighter text-brand-red drop-shadow-sm">
+      {/* --- Main Typography Hero (Fluid Clamped Size) --- */}
+      <div className="relative z-10 flex flex-col items-center text-center max-w-full mt-2 mb-6">
+        <h1 className="text-[clamp(2.4rem,10vw,6rem)] font-black uppercase leading-[0.85] tracking-tight text-brand-red drop-shadow-sm">
           Electronics
         </h1>
-        <h1 className="text-7xl md:text-8xl font-black uppercase leading-[0.8] tracking-tighter text-brand-black drop-shadow-sm">
+        <h1 className="text-[clamp(2.4rem,10vw,6rem)] font-black uppercase leading-[0.85] tracking-tight text-brand-black drop-shadow-sm -mt-1">
           Appliances
         </h1>
-        <h1 className="text-7xl md:text-8xl font-black uppercase leading-[0.8] tracking-tighter text-brand-yellow drop-shadow-sm mt-2">
+        <h1 className="text-[clamp(2.4rem,10vw,6rem)] font-black uppercase leading-[0.85] tracking-tight text-brand-yellow drop-shadow-sm -mt-1">
           & Home Decor
         </h1>
-        <p className="mt-4 text-sm md:text-base text-gray-500 font-medium tracking-wide">
+        <p className="mt-3 text-xs sm:text-sm text-gray-500 font-medium tracking-wide px-4 text-center leading-relaxed">
           Two locations in Buea: St. Luke Junction & Tar Street, Muea Market.
         </p>
       </div>
 
       {/* --- Linktree Buttons --- */}
-      <div className="relative z-10 w-full max-w-md flex flex-col gap-3 mt-4">
+      <div className="relative z-10 w-full max-w-md flex flex-col gap-3 mt-2">
         
         {/* 1. Browse Catalog (Primary CTA - Red) */}
         <Link 
