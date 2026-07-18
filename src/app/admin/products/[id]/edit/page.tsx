@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import Image from "next/image";
 
 export default function EditProductPage() {
   const { id } = useParams();
@@ -66,7 +67,9 @@ export default function EditProductPage() {
         </div>
         <div>
           <p className="text-sm text-gray-600 dark:text-gray-300">Current image:</p>
-          <img src={imageUrl} alt="Current" className="w-24 h-24 object-cover rounded mt-1" />
+          <div className="relative w-24 h-24 mt-1 rounded overflow-hidden bg-gray-100 dark:bg-gray-700">
+            <Image src={imageUrl} alt="Current product image" fill className="object-cover" />
+          </div>
         </div>
         <button type="submit" disabled={saving} className="w-full bg-brand-red text-white py-2 rounded-xl font-semibold hover:bg-[#7a0a14] disabled:opacity-50">{saving ? "Saving..." : "Update Product"}</button>
       </form>
