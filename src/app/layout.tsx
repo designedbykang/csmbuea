@@ -5,7 +5,6 @@ import { CartProvider } from '@/context/CartContext'
 import { ThemeProvider } from '@/context/ThemeContext'
 import { NotificationProvider } from '@/context/NotificationContext'
 import Header from '@/components/Header'
-import SideMenu from '@/components/SideMenu'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <NotificationProvider>
               <Header />
               <main className="flex-1 overflow-y-auto">{children}</main>
-              <SideMenu />
+              {/* <SideMenu /> <-- REMOVED - Header already handles it */}
             </NotificationProvider>
           </CartProvider>
         </ThemeProvider>
