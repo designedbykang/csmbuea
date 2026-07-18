@@ -53,7 +53,7 @@ export default function SettingsPage() {
                   key={idx}
                   className={`flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors`}
                   onClick={() => {
-                    if ('href' in item) {
+                    if ('href' in item && item.href) {
                       router.push(item.href);
                     } else if ('action' in item) {
                       item.action();
