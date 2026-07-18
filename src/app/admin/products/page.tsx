@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Pencil, Trash2, Plus } from "lucide-react";
+import Image from "next/image";
 
 export default async function AdminProductsPage() {
   // Fetch products and categories in parallel
@@ -38,7 +39,11 @@ export default async function AdminProductsPage() {
           <tbody>
             {products?.map((p) => (
               <tr key={p.id} className="border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                <td className="px-4 py-3"><img src={p.image_url} alt={p.title} className="w-12 h-12 object-cover rounded-lg" /></td>
+                <td className="px-4 py-3">
+                  <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
+                    <Image src={p.image_url} alt={p.title} fill className="object-cover" />
+                  </div>
+                </td>
                 <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{p.title}</td>
                 <td className="px-4 py-3">{p.price.toLocaleString()} XAF</td>
                 <td className="px-4 py-3">{p.category_id ? categoryMap.get(p.category_id) || "—" : "—"}</td>
