@@ -25,7 +25,7 @@ export default function SearchPage() {
       <Link href="/" className="inline-flex items-center text-gray-600 dark:text-gray-400 mb-4 hover:text-brand-red dark:hover:text-brand-yellow">
         <ArrowLeft size={20} className="mr-2" /> Back
       </Link>
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Search Results for "{query}"</h1>
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Search Results for &quot;{query}&quot;</h1>
       {loading ? (
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">Searching...</div>
       ) : products.length === 0 ? (
