@@ -64,7 +64,9 @@ export default function SettingsPage() {
                     <item.icon size={20} className="text-gray-600 dark:text-gray-300" />
                     <span className="text-gray-900 dark:text-gray-100">{item.label}</span>
                   </div>
-                  {item.extra && <span className="text-sm text-gray-500 dark:text-gray-400">{item.extra}</span>}
+                  {'extra' in item && item.extra && (
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{item.extra}</span>
+                  )}
                 </div>
               ))}
             </div>
