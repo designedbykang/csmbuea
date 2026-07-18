@@ -13,10 +13,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "@supabase/supabase-js": "^2.49.1",
-    "@tanstack/react-query": "^5.71.0",
-    "react-hook-form": "^7.55.0",
-    "lucide-react": "^0.479.0",
-    "@supabase/ssr": "^0.6.0"
+    "@supabase/ssr": "^0.6.0",
+    "lucide-react": "^0.479.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
