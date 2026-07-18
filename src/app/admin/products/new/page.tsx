@@ -21,7 +21,7 @@ const iconMap: Record<string, any> = {
   Smartphone: Icons.Smartphone,
   MoreHorizontal: Icons.MoreHorizontal,
   Armchair: Icons.Armchair,
-  Carpet: Icons.Carpet,
+  Carpet: Icons.SquareStack, // Fallback for Carpet
 };
 
 export default function NewProductPage() {
