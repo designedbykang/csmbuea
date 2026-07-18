@@ -9,16 +9,16 @@ export default function Home() {
       {/* Main Typography Hero - White on Deep Crimson */}
       <div className="flex flex-col items-center text-center max-w-full mb-8">
         <h1 className="text-[clamp(3rem,12vw,6rem)] font-extrabold uppercase leading-[0.9] tracking-tight text-white drop-shadow-sm">
-          Electronics
+          CHINESE
         </h1>
         <h1 className="text-[clamp(3rem,12vw,6rem)] font-extrabold uppercase leading-[0.9] tracking-tight text-white drop-shadow-sm -mt-1">
-          Appliances
+          SUPERMARKET
         </h1>
         <h1 className="text-[clamp(3rem,12vw,6rem)] font-extrabold uppercase leading-[0.9] tracking-tight text-brand-yellow drop-shadow-sm -mt-1">
-          & Home Decor
+          BUEA
         </h1>
         <p className="mt-4 text-sm sm:text-base text-white/80 font-medium tracking-wide px-4 text-center leading-relaxed max-w-sm mx-auto">
-          Two locations in Buea: St. Luke Junction & Tar Street, Muea Market.
+          We operate in two locations in Buea: St. Luke Junction & Tar Street, Muea Market.
         </p>
       </div>
 
