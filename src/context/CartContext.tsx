@@ -1,5 +1,4 @@
 "use client";
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 type CartItem = {
@@ -45,25 +44,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeFromCart = (id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
-  };
-
+  const removeFromCart = (id: string) => setItems((prev) => prev.filter((i) => i.id !== id));
   const updateQuantity = (id: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(id);
-      return;
-    }
-    setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, quantity } : i))
-    );
+    if (quantity <= 0) return removeFromCart(id);
+    setItems((prev) => prev.map((i) => i.id === id ? { ...i, quantity } : i));
   };
-
-  const clearCart = () => {
-    setItems([]);
-    localStorage.removeItem("csmbuea_cart");
-  };
-
+  const clearCart = () => { setItems([]); localStorage.removeItem("csmbuea_cart"); };
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
