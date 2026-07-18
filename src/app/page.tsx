@@ -5,7 +5,7 @@ import {
 
 export default function Home() {
   return (
-    <div className="relative h-full bg-brand-red flex flex-col items-center justify-center px-4 pb-10 pt-16">
+    <div className="min-h-full bg-brand-red flex flex-col items-center justify-center px-4 pt-16 pb-10">
       {/* Main Typography Hero - White on Deep Crimson */}
       <div className="flex flex-col items-center text-center max-w-full mb-8">
         <h1 className="text-[clamp(3rem,12vw,6rem)] font-extrabold uppercase leading-[0.9] tracking-tight text-white drop-shadow-sm">
