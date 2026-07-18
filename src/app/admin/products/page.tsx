@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import Image from "next/image";
+import { DeleteButton } from "./delete-button";
 
 export default async function AdminProductsPage() {
   // Fetch products and categories in parallel
@@ -49,12 +50,7 @@ export default async function AdminProductsPage() {
                 <td className="px-4 py-3">{p.category_id ? categoryMap.get(p.category_id) || "—" : "—"}</td>
                 <td className="px-4 py-3 flex gap-2">
                   <Link href={`/admin/products/${p.id}/edit`} className="text-blue-600 dark:text-blue-400 hover:text-blue-800"><Pencil size={18} /></Link>
-                  <form action={`/api/admin/products/delete`} method="POST">
-                    <input type="hidden" name="id" value={p.id} />
-                    <button type="submit" className="text-red-600 hover:text-red-800" onClick={(e) => !confirm("Delete this product?") && e.preventDefault()}>
-                      <Trash2 size={18} />
-                    </button>
-                  </form>
+                  <DeleteButton productId={p.id} />
                 </td>
               </tr>
             ))}
