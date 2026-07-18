@@ -7,6 +7,7 @@ import { useNotifications } from "@/context/NotificationContext";
 import { useState } from "react";
 import SideMenu from "./SideMenu";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Header() {
   const { items } = useCart();
@@ -40,6 +41,13 @@ export default function Header() {
           <button onClick={() => router.push("/search")} className="sm:hidden p-1 text-brand-black dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
             <Search size={24} />
           </button>
+
+          {/* Logo Container - READY FOR YOUR LOGO */}
+          <Link href="/" className="relative h-8 w-32 shrink-0 flex items-center justify-center">
+            {/* This <Image /> tag will display your logo. We will add the file next. */}
+            <Image src="/logo.svg" alt="CSM Buea" fill className="object-contain" priority />
+          </Link>
+
           <Link href="/notifications" className="relative p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
             <Bell size={24} className="text-brand-black dark:text-gray-100" />
             {unreadCount > 0 && (
