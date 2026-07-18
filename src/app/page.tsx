@@ -11,7 +11,7 @@ export default function Home() {
         <h1 className="text-[clamp(3rem,12vw,6rem)] font-extrabold uppercase leading-[0.9] tracking-tight text-white drop-shadow-sm">
           CHINESE
         </h1>
-        <h1 className="text-[clamp(3rem,12vw,6rem)] font-extrabold uppercase leading-[0.9] tracking-tight text-white drop-shadow-sm -mt-1">
+        <h1 className="text-[clamp(2rem,10vw,4rem)] font-extrabold uppercase leading-[0.9] tracking-tight text-white drop-shadow-sm -mt-1">
           SUPERMARKET
         </h1>
         <h1 className="text-[clamp(3rem,12vw,6rem)] font-extrabold uppercase leading-[0.9] tracking-tight text-brand-yellow drop-shadow-sm -mt-1">
