@@ -16,7 +16,7 @@ export default function OrdersPage() {
     <div className="min-h-full bg-brand-bg dark:bg-[#0b141a] p-6 pb-24">
       <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">My Orders</h1>
       {orders.length === 0 ? (
-        <div className="bg-white dark:bg-[#1f2a30] p-8 rounded-2xl text-center shadow-sm"><Package size={48} className="mx-auto text-gray-300 dark:text-gray-500 mb-4" /><p className="text-gray-500 dark:text-gray-400">You haven't placed any orders yet.</p></div>
+        <div className="bg-white dark:bg-[#1f2a30] p-8 rounded-2xl text-center shadow-sm"><Package size={48} className="mx-auto text-gray-300 dark:text-gray-500 mb-4" /><p className="text-gray-500 dark:text-gray-400">You haven&apos;t placed any orders yet.</p></div>
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
