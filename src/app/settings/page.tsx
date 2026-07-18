@@ -55,7 +55,7 @@ export default function SettingsPage() {
                   onClick={() => {
                     if ('href' in item && item.href) {
                       router.push(item.href);
-                    } else if ('action' in item) {
+                    } else if ('action' in item && typeof item.action === 'function') {
                       item.action();
                     }
                   }}
