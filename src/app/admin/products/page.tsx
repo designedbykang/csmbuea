@@ -3,8 +3,18 @@ import { supabase } from "@/lib/supabase";
 import { Pencil, Trash2, Plus } from "lucide-react";
 
 export default async function AdminProductsPage() {
-  const { data: products, error } = await supabase.from("products").select("*").order("created_at", { ascending: false });
-  if (error) return <div className="text-red-500">Error: {error.message}</div>;
+  // Fetch products and categories in parallel
+  const [{ data: products, error: productsError }, { data: categories, error: categoriesError }] = await Promise.all([
+    supabase.from("products").select("*").order("created_at", { ascending: false }),
+    supabase.from("categories").select("id, name").order("name"),
+  ]);
+
+  if (productsError) return <div className="text-red-500">Error: {productsError.message}</div>;
+  if (categoriesError) return <div className="text-red-500">Error: {categoriesError.message}</div>;
+
+  // Build a lookup map for categories
+  const categoryMap = new Map<string, string>();
+  categories?.forEach((c) => categoryMap.set(c.id, c.name));
 
   return (
     <div>
@@ -26,12 +36,12 @@ export default async function AdminProductsPage() {
             </tr>
           </thead>
           <tbody>
-            {products.map((p) => (
+            {products?.map((p) => (
               <tr key={p.id} className="border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                 <td className="px-4 py-3"><img src={p.image_url} alt={p.title} className="w-12 h-12 object-cover rounded-lg" /></td>
                 <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{p.title}</td>
                 <td className="px-4 py-3">{p.price.toLocaleString()} XAF</td>
-                <td className="px-4 py-3">{p.category_id ? (await supabase.from("categories").select("name").eq("id", p.category_id).single()).data?.name : "—"}</td>
+                <td className="px-4 py-3">{p.category_id ? categoryMap.get(p.category_id) || "—" : "—"}</td>
                 <td className="px-4 py-3 flex gap-2">
                   <Link href={`/admin/products/${p.id}/edit`} className="text-blue-600 dark:text-blue-400 hover:text-blue-800"><Pencil size={18} /></Link>
                   <form action={`/api/admin/products/delete`} method="POST">
