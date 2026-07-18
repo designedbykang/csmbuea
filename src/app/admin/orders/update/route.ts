@@ -17,7 +17,8 @@ export async function POST(req: NextRequest) {
           cookieStore.set(name, value, options);
         },
         remove(name: string, options: any) {
-          cookieStore.delete(name, options);
+          // Only pass the name; options are not supported by cookieStore.delete
+          cookieStore.delete(name);
         },
       },
     }
