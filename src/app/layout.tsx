@@ -9,8 +9,11 @@ import Header from '@/components/Header'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'CSM Buea',
-  description: 'Electronics, appliances, and home decor.',
+  title: 'Chinese Supermarket Buea',
+  description: 'Electronics, Appliances, and Home Decor.',
+  icons: {
+    icon: '/favicon.png', // Points to your new file in public
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
