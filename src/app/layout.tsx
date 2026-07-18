@@ -1,38 +1,32 @@
 import type { Metadata } from 'next'
-import { Montserrat } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import './global.css'
 import { CartProvider } from '@/context/CartContext'
+import { ThemeProvider } from '@/context/ThemeContext'
+import { NotificationProvider } from '@/context/NotificationContext'
 import Header from '@/components/Header'
 import SideMenu from '@/components/SideMenu'
 
-const montserrat = Montserrat({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'CSM Buea',
   description: 'Electronics, appliances, and home decor.',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      {/* The body is a fixed 100dvh flex container */}
-      <body className={`${montserrat.className} h-dvh flex flex-col bg-white overflow-hidden`}>
-        <CartProvider>
-          {/* The Header sits at the top and never moves */}
-          <Header />
-          
-          {/* The main content area is flex-1 and scrolls independently */}
-          <main className="flex-1 overflow-y-auto">
-            {children}
-          </main>
-          
-          {/* The Drawer sits over the entire app */}
-          <SideMenu />
-        </CartProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} h-dvh flex flex-col bg-white dark:bg-[#0b141a] overflow-hidden transition-colors`}>
+        <ThemeProvider>
+          <CartProvider>
+            <NotificationProvider>
+              <Header />
+              <main className="flex-1 overflow-y-auto">{children}</main>
+              <SideMenu />
+            </NotificationProvider>
+          </CartProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
