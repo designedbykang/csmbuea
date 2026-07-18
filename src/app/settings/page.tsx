@@ -4,6 +4,10 @@ import { useNotifications } from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Moon, Sun, Bell, Lock, User, ShoppingBag, HelpCircle, Info } from "lucide-react";
 
+type MenuItem = 
+  | { icon: any; label: string; href: string; extra?: string }
+  | { icon: any; label: string; action: () => void; extra?: string };
+
 export default function SettingsPage() {
   const { theme, toggleTheme } = useTheme();
   const { unreadCount } = useNotifications();
@@ -47,8 +51,14 @@ export default function SettingsPage() {
               {group.items.map((item, idx) => (
                 <div
                   key={idx}
-                  className={`flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${item.href ? "cursor-pointer" : ""}`}
-                  onClick={item.href ? () => router.push(item.href) : item.action}
+                  className={`flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors`}
+                  onClick={() => {
+                    if ('href' in item) {
+                      router.push(item.href);
+                    } else if ('action' in item) {
+                      item.action();
+                    }
+                  }}
                 >
                   <div className="flex items-center gap-3">
                     <item.icon size={20} className="text-gray-600 dark:text-gray-300" />
