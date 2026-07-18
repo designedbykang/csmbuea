@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { Package, ShoppingCart, Users, DollarSign } from "lucide-react";
 
@@ -47,8 +48,12 @@ export default async function AdminDashboardPage() {
         <div className="bg-white dark:bg-[#1f2a30] rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Quick Actions</h2>
           <div className="space-y-2">
-            <a href="/admin/products/new" className="block w-full text-center py-2 bg-brand-red text-white rounded-xl hover:bg-[#7a0a14]">Add New Product</a>
-            <a href="/admin/orders" className="block w-full text-center py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600">View All Orders</a>
+            <Link href="/admin/products/new" className="block w-full text-center py-2 bg-brand-red text-white rounded-xl hover:bg-[#7a0a14]">
+              Add New Product
+            </Link>
+            <Link href="/admin/orders" className="block w-full text-center py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600">
+              View All Orders
+            </Link>
           </div>
         </div>
       </div>
