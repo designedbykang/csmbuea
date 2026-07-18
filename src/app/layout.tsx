@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <NotificationProvider>
               <Header />
               <main className="flex-1 overflow-y-auto">{children}</main>
-              {/* <SideMenu /> <-- REMOVED - Header already handles it */}
+              {/* <SideMenu />  <-- REMOVED – Header already renders it correctly */}
             </NotificationProvider>
           </CartProvider>
         </ThemeProvider>
