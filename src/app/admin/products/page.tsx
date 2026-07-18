@@ -1,0 +1,51 @@
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import { Pencil, Trash2, Plus } from "lucide-react";
+
+export default async function AdminProductsPage() {
+  const { data: products, error } = await supabase.from("products").select("*").order("created_at", { ascending: false });
+  if (error) return <div className="text-red-500">Error: {error.message}</div>;
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Products</h1>
+        <Link href="/admin/products/new" className="bg-brand-red text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-[#7a0a14]">
+          <Plus size={18} /> Add Product
+        </Link>
+      </div>
+      <div className="bg-white dark:bg-[#1f2a30] rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium">
+            <tr>
+              <th className="px-4 py-3 text-left">Image</th>
+              <th className="px-4 py-3 text-left">Title</th>
+              <th className="px-4 py-3 text-left">Price</th>
+              <th className="px-4 py-3 text-left">Category</th>
+              <th className="px-4 py-3 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((p) => (
+              <tr key={p.id} className="border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                <td className="px-4 py-3"><img src={p.image_url} alt={p.title} className="w-12 h-12 object-cover rounded-lg" /></td>
+                <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{p.title}</td>
+                <td className="px-4 py-3">{p.price.toLocaleString()} XAF</td>
+                <td className="px-4 py-3">{p.category_id ? (await supabase.from("categories").select("name").eq("id", p.category_id).single()).data?.name : "—"}</td>
+                <td className="px-4 py-3 flex gap-2">
+                  <Link href={`/admin/products/${p.id}/edit`} className="text-blue-600 dark:text-blue-400 hover:text-blue-800"><Pencil size={18} /></Link>
+                  <form action={`/api/admin/products/delete`} method="POST">
+                    <input type="hidden" name="id" value={p.id} />
+                    <button type="submit" className="text-red-600 hover:text-red-800" onClick={(e) => !confirm("Delete this product?") && e.preventDefault()}>
+                      <Trash2 size={18} />
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
